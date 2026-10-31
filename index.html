@@ -1,0 +1,566 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>Characters Casting</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: casting board in the Shot Tracker's look. Ink ground, gold hairlines; pipeline strip, sticky filter bar, table, side drawer. Single dark look by choice. */
+:root{
+  color-scheme: dark;
+  --ink:#06080C; --panel:#121722; --panel2:#181E2B;
+  --gold:#C9A84C; --goldhi:#E0BC58; --cream:#F3EEE2;
+  --mute:rgba(243,238,226,.66); --mute2:rgba(243,238,226,.46);
+  --line:rgba(201,168,76,.22); --line-soft:rgba(201,168,76,.11); --line-strong:rgba(201,168,76,.55);
+  --s-cand:#AEB5C2; --s-appr:#E3C04F; --s-talk:#8FA7D6; --s-conf:#7BB59E; --s-decl:#E5514A;
+  --a1:#E2A083; --a2:#8FA7D6; --a3:#D98BA6; --a4:#7BB59E; --a5:#B9A0E6;
+  --f-display:"Cormorant Garamond",Georgia,serif;
+  --f-ui:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--ink);color:var(--cream);font:300 15px/1.55 var(--f-ui);letter-spacing:.01em;
+  background-image:radial-gradient(ellipse at 10% -10%,rgba(201,168,76,.10),transparent 55%)}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+@media(min-width:900px){.wrap{padding-left:max(40px,env(safe-area-inset-left,0px));padding-right:max(40px,env(safe-area-inset-right,0px))}}
+.kicker,.label{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+.label{color:var(--mute2);letter-spacing:.18em;font-size:9.5px}
+h1{font:400 clamp(36px,5vw,58px)/1.02 var(--f-display);margin:10px 0 12px;text-wrap:balance}
+h1 em{color:var(--gold);font-style:italic}
+.lede{color:var(--mute);max-width:64ch;margin:0}
+.head{display:flex;flex-direction:column;gap:28px;padding-bottom:28px}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.stage{text-align:left;padding:14px 18px 16px;display:flex;flex-direction:column;gap:6px;border-left:1px solid var(--line-soft);transition:background .15s;position:relative}
+.stage:first-child{border-left:0}
+.stage:hover{background:rgba(201,168,76,.05)}
+.stage[aria-pressed="true"]{background:rgba(201,168,76,.10)}
+.stage[aria-pressed="true"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--c,var(--gold))}
+.stage .v{font:400 34px/1 var(--f-display);font-variant-numeric:tabular-nums;color:var(--c,var(--cream))}
+.stage .label{display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--c,var(--gold));flex:none}
+.bar-track{height:3px;background:rgba(243,238,226,.07);border-radius:2px;overflow:hidden}
+.bar-track i{display:block;height:100%;background:var(--c,var(--gold))}
+@media(max-width:760px){.pipe{grid-template-columns:repeat(3,minmax(0,1fr))}.stage:nth-child(4){border-left:0}.stage:nth-child(n+4){border-top:1px solid var(--line-soft)}}
+
+/* filter bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(6,8,12,.95);backdrop-filter:blur(10px);
+  padding-block:16px;border-block:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{flex:1 1 260px;position:relative;min-width:0}
+.search svg{position:absolute;left:11px;top:50%;width:15px;height:15px;transform:translateY(-50%);color:var(--mute2)}
+.inp{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:9px 11px;font-size:14px;width:100%;min-width:0}
+.search .inp{padding-left:34px}
+select.inp{width:auto;appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+select.inp.on,.inp:focus{border-color:var(--line-strong);outline:none}
+.count{font-family:var(--f-mono);font-size:11px;color:var(--mute2)}
+.clear{font-family:var(--f-mono);font-size:11px;color:var(--gold);text-decoration:underline;text-underline-offset:3px}
+.spacer{flex:1}
+@media(max-width:760px){.bar select.inp{flex:1 1 140px}.bar .btn.solid{flex:1 1 100%;justify-content:center}}
+.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;padding:10px 14px;border:1px solid var(--line-strong);border-radius:3px;color:var(--gold);white-space:nowrap}
+.btn:hover{background:rgba(201,168,76,.1)}
+.btn svg{width:13px;height:13px}
+.btn.solid{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.btn.solid:hover{background:var(--goldhi)}
+.btn.danger{color:var(--s-decl);border-color:rgba(229,81,74,.5)}
+.lock{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.lock form{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lock .inp{width:190px;padding-block:7px}
+.lock .btn{padding-block:8px}
+.msg{font-family:var(--f-mono);font-size:11px;color:var(--mute2)}
+.msg.err{color:var(--s-decl)}.msg.ok{color:var(--s-conf)}
+
+/* table */
+.tbl-wrap{margin-top:24px;border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow-x:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:1320px}
+col.c-name{width:14%}col.c-role{width:10%}col.c-aff{width:11%}col.c-cty{width:7%}col.c-arc{width:11%}col.c-em{width:14%}col.c-ph{width:10%}col.c-st{width:11%}col.c-note{width:12%}
+th{background:var(--panel2);text-align:left;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute2);font-weight:400;padding:0;border-bottom:1px solid var(--line)}
+th button{display:flex;align-items:center;gap:6px;width:100%;padding:14px 16px;text-align:left;text-transform:inherit;letter-spacing:inherit}
+th button:hover,th button[data-on]{color:var(--gold)}
+th .ar{opacity:0;font-size:8px}th button[data-on] .ar{opacity:1}
+td{padding:16px;border-bottom:1px solid var(--line-soft);vertical-align:top;font-size:13.5px;line-height:1.45;overflow-wrap:anywhere}
+tbody tr:last-child td{border-bottom:0}
+tbody tr.r{cursor:pointer;transition:background .12s}
+tbody tr.r:hover{background:rgba(201,168,76,.05)}
+tbody tr.r:hover .nm{color:var(--goldhi)}
+tbody tr.r:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+tr.r.declined td{opacity:.55}
+tr.r.declined td.st{opacity:1}
+.nm{font:500 20px/1.15 var(--f-display);color:var(--cream);overflow-wrap:normal}
+.tt{font-size:12px;color:var(--mute2);margin-top:3px}
+.dim{color:var(--mute)}
+.none{color:var(--mute2)}
+.role-cell{font-size:13px;color:var(--gold)}
+.arcs{display:flex;flex-wrap:wrap;gap:5px}
+.arc{font-family:var(--f-mono);font-size:10px;letter-spacing:.03em;padding:3px 8px;border-radius:2px;border-left:2px solid var(--c);color:var(--mute);background:rgba(243,238,226,.04)}
+.note-cell{font-size:12.5px;color:var(--mute);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.added-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--a2);margin-left:8px;vertical-align:middle}
+.stsel{appearance:none;width:100%;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:5px 22px 5px 9px;border-radius:999px;border:1px solid var(--c);color:var(--c);background:transparent;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--c) 50%),linear-gradient(135deg,var(--c) 50%,transparent 50%);background-position:calc(100% - 12px) 52%,calc(100% - 8px) 52%;background-size:4px 4px;background-repeat:no-repeat}
+.stsel option{background:var(--panel);color:var(--cream)}
+.locked{font-family:var(--f-mono);font-size:11px;color:var(--mute2);letter-spacing:.2em}
+.cin{display:block;width:calc(100% + 16px);margin:-6px -8px;background:transparent;border:1px solid transparent;border-radius:3px;padding:5px 7px;font-size:13px;color:var(--cream)}
+.cin:hover{border-color:var(--line)}
+.cin:focus{border-color:var(--line-strong);background:var(--ink);outline:none}
+.cin::placeholder{color:var(--mute2)}
+tr.gh td{background:rgba(201,168,76,.05);padding:12px 16px;border-bottom:1px solid var(--line)}
+tr.gh h2{display:inline;font:400 20px var(--f-display);margin:0 10px 0 0}
+.empty-row td{text-align:center;padding:44px;color:var(--mute)}
+
+@media(max-width:760px){
+  .tbl-wrap{border:0;background:none;overflow:visible}
+  table{min-width:0;table-layout:auto}
+  colgroup,thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tbody{display:flex;flex-direction:column;gap:12px}
+  tbody tr.r{position:relative;background:var(--panel);border:1px solid var(--line-soft);border-radius:4px;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+  tbody tr.r td{padding:0;border:0;min-width:0}
+  tbody tr.r td::before{content:attr(data-label);display:block;font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute2);margin-bottom:4px}
+  tbody tr.r td.n{grid-column:1/-1;order:-2;padding-right:120px}
+  tbody tr.r td.n::before,tbody tr.r td.st::before{display:none}
+  tbody tr.r td.st{position:absolute;right:18px;top:16px;width:112px}
+  tbody tr.r td.wide{grid-column:1/-1}
+  .cin{width:100%;margin:0;border-color:var(--line-soft)}
+  tr.gh td{background:none;padding:14px 0 4px;border:0;border-bottom:1px solid var(--line)}
+  .empty-row td{border:1px dashed var(--line);border-radius:4px}
+}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(580px,100%);z-index:21;background-color:#121722;border-left:1px solid var(--line);
+  overflow-y:auto;padding:calc(28px + env(safe-area-inset-top,0px)) max(28px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) 28px;
+  display:flex;flex-direction:column;gap:20px;animation:slide .22s ease-out}
+@keyframes slide{from{transform:translateX(24px)}}
+@media(prefers-reduced-motion:reduce){.drawer{animation:none}}
+.d-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.x{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;font-size:18px;color:var(--mute);flex:none}
+.x:hover{color:var(--cream);border-color:var(--line-strong)}
+.d-name{font:400 40px/1.02 var(--f-display);margin:0;text-wrap:balance}
+.d-hook{font:italic 400 22px/1.3 var(--f-display);color:var(--gold);margin:0;padding-left:14px;border-left:1px solid var(--line-strong)}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px;padding:16px 0;border-block:1px solid var(--line-soft)}
+.facts>div>div:last-child{margin-top:4px;font-size:14px;overflow-wrap:anywhere}
+.bio{color:var(--mute);margin:8px 0 0;max-width:65ch;line-height:1.7}
+.rivals{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rv{font-size:13px;padding:5px 10px;border:1px solid var(--line);border-radius:3px;color:var(--mute)}
+button.rv{color:var(--cream);border-color:var(--line-strong)}
+button.rv:hover{background:rgba(201,168,76,.12)}
+.casting{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.casting textarea{resize:vertical;line-height:1.5}
+.cv{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cp{font-family:var(--f-mono);font-size:10px;color:var(--gold);border:1px solid var(--line);border-radius:2px;padding:2px 6px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:auto;padding-top:16px;border-top:1px solid var(--line-soft)}
+.nav button{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;color:var(--gold)}
+.note{font-size:13px;color:var(--mute2);font-style:italic;margin:0}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.form .full{grid-column:1/-1}
+.form label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.form select.inp{width:100%}
+.form textarea.inp{resize:vertical;line-height:1.5}
+.req{color:var(--gold)}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.confirm{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;border:1px solid rgba(229,81,74,.4);border-radius:3px;font-size:13px}
+@media(max-width:560px){.form,.facts{grid-template-columns:1fr}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:var(--panel2);border:1px solid var(--line-strong);border-radius:3px;padding:10px 16px;font-size:13px;max-width:calc(100% - 32px)}
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <div>
+      <div class="kicker">The Arabians · Season One</div>
+      <h1>Characters Casting</h1>
+      <p class="lede">Track every character from first contact to confirmed. Change a status straight from the list, keep casting notes in each profile, and add people as casting develops. Email and phone stay locked until you enter the team password.</p>
+    </div>
+    <div class="pipe" id="pipe" role="group" aria-label="Filter by casting status"></div>
+  </header>
+
+  <div class="bar">
+    <div class="row">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input class="inp" id="q" type="search" placeholder="Search names, farms, countries, notes…" aria-label="Search characters"></label>
+      <select class="inp" id="fRole" aria-label="Filter by role"></select>
+      <select class="inp" id="fArc" aria-label="Filter by storyline"></select>
+      <select class="inp" id="fGroup" aria-label="Group by">
+        <option value="">No grouping</option><option value="status">Group by status</option><option value="role">Group by role</option><option value="arc">Group by storyline</option><option value="country">Group by country</option>
+      </select>
+      <button class="btn solid" id="addBtn" type="button">+ Add character</button>
+    </div>
+    <div class="row">
+      <div class="lock" id="lock"><span class="label">Email &amp; phone</span><span class="msg">Loading…</span></div>
+      <span class="spacer"></span>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <main class="tbl-wrap" id="grid"></main>
+</div>
+
+<div class="toast" id="toast" hidden role="status"></div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dName"></aside>
+
+<script>
+var SEED = [{"name": "Turki Al Othman", "role": "Team CEO", "title": "Owner", "affiliation": "Ajmal Stud (Saudi Arabia)", "country": "Saudi Arabia", "arc": "The Arab Rising Stars", "hook": "Founded a stud at 17. World Champion at 20.", "bio": "At 23, one of the youngest stud owners on the GCAT and a full-time architecture student. His homebred stallion Sari became the first Saudi-bred male horse to win the World Championship — three years after he founded the farm. Dubai Stud took eight. His stated weakness: he gets emotionally attached to his horses and struggles to part with any of them.", "rivals": "Al Shaqab · Al Shahania", "status": "Confirmed", "note": ""}, {"name": "Khalid Al Jehani", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Al Shaqab (Qatar)", "country": "Qatar", "arc": "The Royal Rivalry", "hook": "He says Arnauld is winning. Raphael says Arnauld replaced him.", "bio": "Manager of Al Shaqab Stud — the most decorated farm in Qatar. Took over before Raphael Curti's exit; now defends Arnauld Mertens, the protégé who replaced him. Holds firm opinions: thinks Giulia is too inexperienced, accuses Abdelaziz Al Marzooqi of excessive gossip, and questions whether Al Shahania can sustain a model where the same person owns and manages.", "rivals": "Dubai Stud · Al Wajba · Al Shahania", "status": "Confirmed", "note": ""}, {"name": "Giulia Bontempi", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Hleetan (Qatar)", "country": "Italy", "arc": "The Loyalty Crisis", "hook": "24 years old. Fourth generation. Only woman in the room.", "bio": "Italian, 24, manager of Hleetan Stud and one of the very few female managers on the GCAT. Comes from a four-generation Arabian breeding family. Her plan: a long-horizon program reviving forgotten bloodlines to deliver exceptional horses in 5–10 years. In a relationship with Constantin, an assistant trainer at Al Shahania — they keep work strictly siloed. Frustrated that Olivia Strauch keeps her at arm's length: \"There are so few women in this field. We should support each other.\"", "rivals": "Al Shaqab (Khalid) · Al Wajba (Olivia)", "status": "Confirmed", "note": ""}, {"name": "Abdelaziz Al Marzooqi", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Dubai Stud (UAE)", "country": "UAE", "arc": "The Royal Rivalry", "hook": "Six years at #1. 'All eyes are on us.'", "bio": "30 years in the game. Dubai Stud has held the world's #1 ranking for six straight years under his watch — 100 employees, 400 horses he checks every day. Makes unannounced visits to Paolo's training center in Italy where Dubai Stud summers its horses. Walks the desert and dives the sea to decompress. His only goal: keep Dubai Stud at the top.", "rivals": "Al Shaqab · Ajman Stud", "status": "Confirmed", "note": ""}, {"name": "Khalid Al Omari", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Ajman Stud (UAE)", "country": "UAE", "arc": "The Loyalty Crisis", "hook": "Inside the Emirates we compete. Abroad, we are one.", "bio": "Manager of Ajman Stud, close confidant of Sheikh Ammar. Refuses to install cameras to monitor staff — believes presence on the ground every day is the only way. Argues that for groomers to do their work properly, their personal lives have to be in order, so he gets involved when needed. Maintains a famously cooperative relationship with Abdelaziz at Dubai Stud — they openly share competition plans to avoid clashes.", "rivals": "Inside UAE: friendly · Abroad: united", "status": "Confirmed", "note": ""}, {"name": "Azzam Alqasem", "role": "Handler", "title": "Handler", "affiliation": "KSA Studs", "country": "Saudi Arabia", "arc": "The Arab Rising Stars", "hook": "My father gave us money for cars. We bought horses instead.", "bio": "Saudi Arabian, one of the very few Arab handlers competing at GCAT — and considered the best of them. Non-exclusive handler for two Saudi studs while running his own training center with his brother Abdullah. Defines himself as the underdog in a world dominated by Western handlers. Doesn't hold back: openly says Raphael has been declining since leaving Al Shaqab, and that he lacks the natural talent of Glenn or Paolo. A judge has called him \"the handler who treats his horses the harshest\" — controversial, debated, but undeniable in the ring.", "rivals": "Glenn Schoukens · Tom Oben", "status": "Confirmed", "note": ""}, {"name": "Arnauld Mertens", "role": "Handler", "title": "Handler", "affiliation": "Al Shaqab (Qatar)", "country": "Belgium", "arc": "The Royal Rivalry", "hook": "27 years old. Replaced his own mentor.", "bio": "Belgian, 27, the youngest handler on the GCAT circuit. Stepped into Al Shaqab the moment his mentor Raphael Curti was forced out. Wants the title of Handler of the Tour — wants to prove himself against older men who underestimate him because of his age. He underestimates them right back: openly criticises Gerald Kurtz's old-school methods and lack of physical fitness. On Raphael: \"A different kind of boss than the one I would like to be.\"", "rivals": "Glenn Schoukens · Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Raphael Curti", "role": "Handler", "title": "Handler", "affiliation": "Al Wajba (Qatar)", "country": "France", "arc": "May the Best Man Win", "hook": "He says exactly what he thinks. About everyone. Every time.", "bio": "French handler Raphaël Curti is the loudest, most combustible personality on the GCAT circuit — and he knows it, and he doesn't care. Self-made from the ground up, Raphaël built his reputation on exceptional horsemanship and an absolute refusal to keep his opinions to himself. He says exactly what he thinks, about anyone, at any time. Fiery, emotionally intense, and magnetically watchable, Raphaël treats the show ring the way he treats conversation: as a stage, and he is always the main act. He is a handler of real championship pedigree who has guided horses to prestigious titles worldwide — and if you didn't already know that, he will tell you.", "rivals": "Glenn Schoukens · Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Glenn Schoukens", "role": "Handler", "title": "Handler", "affiliation": "Hleetan & Ajman & Ajmal", "country": "Belgium", "arc": "The Loyalty Crisis, May the Best Man Win", "hook": "The next #1. His brother trains. He performs.", "bio": "Belgian handler Glenn Schoukens is widely considered the most exciting talent on the GCAT circuit right now. Composed and precise in the ring, he combines an elite competitive instinct with the kind of composure that takes years to develop — though he has developed it young. He operates across multiple top-tier studs simultaneously, an approach that demands not just skill but exceptional diplomatic intelligence. Away from competition, he runs a training center in Belgium with his brother Tom, dividing the roles instinctively: Glenn owns the ring, Tom shapes the horses. His stallion Berlin's standout scores at GCAT 2025 made clear what many already suspected — Glenn is no longer just a rising name. He is the name everyone else has to answer to.", "rivals": "Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Giacomo Capecci", "role": "Handler", "title": "Handler", "affiliation": "Al Shahania (Qatar)", "country": "Italy", "arc": "May the Best Man Win", "hook": "Often misread. Never misplaced.", "bio": "Italian handler Giacomo Capecci is calm, calculated, and quietly one of the most gifted horsemen on the GCAT circuit. He has an intuitive connection with horses that few can replicate — his approach is methodical rather than forceful, built on patience and reading an animal rather than imposing on it. Despite a serious demeanor that has often been misread as cold, those who know him describe him as a man who simply lets his work do the talking. He manages relationships with multiple stud farms without burning bridges, a rare skill in a world where loyalty is a weapon and everyone is watching.", "rivals": "Glenn Schoukens", "status": "Candidate", "note": "Casting not yet confirmed"}, {"name": "Paolo Capecci", "role": "Handler", "title": "Handler", "affiliation": "Dubai Stud (UAE)", "country": "Italy", "arc": "The Royal Rivalry, May the Best Man Win", "hook": "Being number one means everyone is gunning for you. Every single show.", "bio": "Widely regarded as the world's number one Arabian horse handler, Paolo Capecci operates at a level few can match. From his training center in Italy — 25 staff, 250 horses — he has built an empire of precision and excellence as Dubai Stud's star performer. Composed and elegantly methodical in the ring, Paolo is both the industry's gold standard and its most hunted target. With Glenn Schoukens closing fast and a new generation studying his every move, the question is no longer whether Paolo is the best — it's how long he can hold the crown.", "rivals": "Glenn Schoukens · Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Philippe Hosay", "role": "Handler", "title": "Handler", "affiliation": "Ajmal Stud (KSA)", "country": "Belgium", "arc": "The Arab Rising Stars", "hook": "Loyalty in this industry is hard to find — winning comes first.", "bio": "Belgian handler and GCAT veteran, Philippe Hosay has spent decades mastering the art of presenting purebred Arabians at the world's highest level. Now 55 and showing for Ajmal Stud in Saudi Arabia, he carries the trust of a young ambitious owner determined to bring Arabian glory back to its homeland — but his aging body and a rising generation of Arab handlers are closing in. A legend fighting to stay relevant in the sport he helped define.", "rivals": "", "status": "Confirmed", "note": ""}, {"hook": "", "bio": "", "rivals": "", "status": "Candidate", "note": "", "arc": "Beauty of Controversy", "name": "Faleh Al Nasr", "role": "Chairman of GCAT", "title": "Chairman", "affiliation": "GCAT", "country": "Qatar"}, {"hook": "", "bio": "", "rivals": "", "status": "Candidate", "note": "", "arc": "Beauty of Controversy", "name": "Mohamed Hammad", "role": "Expert", "title": "Expert", "affiliation": "", "country": "Egypt"}, {"hook": "", "bio": "", "rivals": "", "status": "Candidate", "note": "", "arc": "Beauty of Controversy", "name": "Christianne Chazel", "role": "Expert", "title": "Expert", "affiliation": "", "country": "France"}];
+var CHECK = {"salt":"aQdi7zzVB4bVzQsRZ4B0PQ==","iv":"Ae72tz7gBgoFfwmR","ct":"3RYFxI93Zz2dYoUIFP2GOPL+ItiVwhwFIUCv"};
+var STATUSES = ["Candidate","Approached","In talks","Confirmed","Declined"];
+var ST_COL = {"Candidate":"var(--s-cand)","Approached":"var(--s-appr)","In talks":"var(--s-talk)","Confirmed":"var(--s-conf)","Declined":"var(--s-decl)"};
+var ARCS = ["May the Best Man Win","The Royal Rivalry","Beauty of Controversy","The Arab Rising Stars","The Loyalty Crisis"];
+var ARC_COL = {"May the Best Man Win":"var(--a1)","The Royal Rivalry":"var(--a2)","Beauty of Controversy":"var(--a3)","The Arab Rising Stars":"var(--a4)","The Loyalty Crisis":"var(--a5)"};
+var COLS = [["name","Name"],["role","Role"],["affiliation","Farm / stud"],["country","Country"],["arc","Storyline"],["email","Email"],["phone","Phone"],["status","Status"],["note","Casting notes"]];
+var CW = {name:"c-name",role:"c-role",affiliation:"c-aff",country:"c-cty",arc:"c-arc",email:"c-em",phone:"c-ph",status:"c-st",note:"c-note"};
+
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+function slug(n){ return String(n).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "x"; }
+var toastT;
+function toast(m){ var el=$("toast"); el.textContent=m; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ el.hidden=true; }, 2800); }
+
+/* ---------- state ---------- */
+var ADDED = {};     // id -> character added by the team
+var CASTING = {};   // id -> {status, note}
+var RAW = {};       // id -> encrypted contact {iv, ct}
+var CONTACTS = {};  // id -> {email, phone} (decrypted)
+var KEY = null;
+var CAST = [];
+var F = {q:"", role:"", arc:"", status:"", group:"", sort:"", dir:1};
+var cur = -1, lastFocus = null, pendingRender = false;
+
+function prep(p){ p.arcs = (p.arc||"").split(",").map(function(s){return s.trim();}).filter(Boolean); return p; }
+SEED.forEach(function(p){ p.id = slug(p.name); p.seedStatus = p.status === "Confirmed" ? "Confirmed" : "Candidate"; prep(p); });
+function rebuild(){
+  var extra = Object.keys(ADDED).map(function(k){ var p = Object.assign({}, ADDED[k]); p.id = k; p.added = true; p.seedStatus = "Candidate"; return prep(p); })
+    .sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
+  CAST = SEED.concat(extra);
+  CAST.forEach(function(p,i){ p.i = i; });
+}
+function status(p){ var c = CASTING[p.id]; return (c && c.status) || p.seedStatus; }
+function note(p){ var c = CASTING[p.id]; return (c && c.note) || ""; }
+function cval(p,k){ var c = CONTACTS[p.id]; return (KEY && c && c[k]) || ""; }
+function val(p,k){ if (k==="status") return STATUSES.indexOf(status(p)); if (k==="note") return note(p); if (k==="email"||k==="phone") return cval(p,k); return p[k]||""; }
+
+/* ---------- storage: shared on the published page, this browser otherwise ---------- */
+var STORE = {mode:"local", db:null};
+function localGet(c){ try { return JSON.parse(localStorage.getItem("arabians-casting-"+c) || "{}") || {}; } catch(_){ return {}; } }
+function localPut(c, map){ localStorage.setItem("arabians-casting-"+c, JSON.stringify(map)); }
+var MAPS = {characters:function(){return ADDED;}, casting:function(){return CASTING;}, contacts:function(){return RAW;}};
+var queue = {};
+function write(coll, id, data){
+  var key = coll+"/"+id;
+  if (queue[key]){ queue[key] = {data:data}; return Promise.resolve(); }
+  queue[key] = true;
+  var run = function(d){
+    var p = STORE.mode==="shared"
+      ? (d===null ? STORE.db.collection(coll).doc(id).delete() : STORE.db.collection(coll).doc(id).set(d))
+      : new Promise(function(res){ var m = localGet(coll); if (d===null) delete m[id]; else m[id] = d; localPut(coll, m); res(); });
+    return p.then(function(){
+      var next = queue[key]; queue[key] = false;
+      if (next && next.data !== undefined){ queue[key] = true; return run(next.data); }
+    }, function(e){ queue[key] = false; throw e; });
+  };
+  return run(data);
+}
+function saveErr(e){
+  if (STORE.mode==="shared") toast(e && e.code==="quota_exceeded" ? "Storage is full, so this change wasn't saved." : "Couldn't save. You need edit access to this page to make changes.");
+  else toast("Couldn't save. This browser is blocking storage.");
+}
+function where(){ return STORE.mode==="shared" ? "Changes save for everyone with access." : "Changes save in this browser only."; }
+
+/* ---------- pipeline + filters ---------- */
+function drawPipe(){
+  var counts = {}; STATUSES.forEach(function(s){ counts[s]=0; }); CAST.forEach(function(p){ counts[status(p)]++; });
+  var total = CAST.length;
+  $("pipe").innerHTML = '<button class="stage" data-st="" aria-pressed="'+(!F.status)+'"><span class="label">All</span><span class="v">'+total+'</span><span class="bar-track"><i style="width:100%"></i></span></button>' +
+    STATUSES.map(function(s){
+      return '<button class="stage" data-st="'+s+'" aria-pressed="'+(F.status===s)+'" style="--c:'+ST_COL[s]+'"><span class="label"><span class="dot"></span>'+s+'</span><span class="v">'+counts[s]+'</span><span class="bar-track"><i style="width:'+(total?Math.round(counts[s]/total*100):0)+'%"></i></span></button>';
+    }).join("");
+}
+function drawFilters(){
+  var roles = []; CAST.forEach(function(p){ if (roles.indexOf(p.role)<0) roles.push(p.role); });
+  if (F.role && roles.indexOf(F.role)<0) F.role = "";
+  $("fRole").innerHTML = '<option value="">All roles</option>' + roles.map(function(r){ return '<option'+(r===F.role?' selected':'')+'>'+esc(r)+'</option>'; }).join("");
+  $("fArc").innerHTML = '<option value="">All storylines</option>' + ARCS.map(function(a){ return '<option'+(a===F.arc?' selected':'')+'>'+esc(a)+'</option>'; }).join("");
+  ["fRole","fArc","fGroup"].forEach(function(id){ $(id).classList.toggle("on", !!$(id).value); });
+}
+function shown(){
+  var q = F.q.trim().toLowerCase();
+  var s = CAST.filter(function(p){
+    if (F.role && p.role!==F.role) return false;
+    if (F.arc && p.arcs.indexOf(F.arc)<0) return false;
+    if (F.status && status(p)!==F.status) return false;
+    if (q && [p.name,p.role,p.title,p.affiliation,p.country,p.hook,p.bio,p.rivals,p.arc,note(p),status(p),cval(p,"email"),cval(p,"phone")].join(" ").toLowerCase().indexOf(q)<0) return false;
+    return true;
+  });
+  if (F.sort) s.sort(function(a,b){ var x = val(a,F.sort), y = val(b,F.sort); return (typeof x==="number" ? x-y : String(x).localeCompare(String(y)))*F.dir; });
+  return s;
+}
+
+/* ---------- table ---------- */
+function arcTags(p){ return p.arcs.map(function(a){ return '<span class="arc" style="--c:'+(ARC_COL[a]||"var(--gold)")+'">'+esc(a)+'</span>'; }).join("") || '<span class="none">—</span>'; }
+function stSelect(p, id){
+  var s = status(p);
+  return '<select class="stsel" '+(id?'id="'+id+'" ':'')+'data-st-for="'+p.i+'" style="--c:'+ST_COL[s]+'" aria-label="Casting status for '+esc(p.name)+'">'+STATUSES.map(function(x){ return '<option'+(x===s?' selected':'')+'>'+x+'</option>'; }).join("")+'</select>';
+}
+function contactCell(p,f){
+  if (!KEY) return '<td><span class="locked">••••••</span></td>';
+  return '<td><input class="cin" data-ci="'+p.i+'" data-f="'+f+'" type="'+(f==="email"?"email":"tel")+'" value="'+esc(cval(p,f))+'" placeholder="'+(f==="email"?"Add email":"Add phone")+'" aria-label="'+(f==="email"?"Email for ":"Phone for ")+esc(p.name)+'" autocomplete="off"></td>';
+}
+function row(p){
+  var s = status(p), n = note(p);
+  return '<tr class="r'+(s==="Declined"?' declined':'')+'" tabindex="0" data-i="'+p.i+'" aria-label="Open profile for '+esc(p.name)+'">' +
+    '<td class="n"><div class="nm">'+esc(p.name)+(p.added?'<span class="added-tag">Added</span>':'')+'</div>'+(p.title?'<div class="tt">'+esc(p.title)+'</div>':'')+'</td>' +
+    '<td><span class="role-cell">'+esc(p.role)+'</span></td>' +
+    '<td>'+(p.affiliation?esc(p.affiliation):'<span class="none">—</span>')+'</td>' +
+    '<td class="dim">'+(p.country?esc(p.country):'<span class="none">—</span>')+'</td>' +
+    '<td class="wide"><div class="arcs">'+arcTags(p)+'</div></td>' +
+    contactCell(p,"email") + contactCell(p,"phone") +
+    '<td class="st">'+stSelect(p)+'</td>' +
+    '<td class="wide">'+(n?'<div class="note-cell">'+esc(n)+'</div>':'<span class="none">—</span>')+'</td></tr>';
+}
+function render(){
+  drawPipe(); drawFilters();
+  var s = shown(), any = F.q||F.role||F.arc||F.status;
+  $("count").innerHTML = s.length+' of '+CAST.length+' shown' + (any?' · <button class="clear" id="clr">Clear filters</button>':'');
+  var head = '<thead><tr>'+COLS.map(function(c){ var on = F.sort===c[0]; return '<th scope="col"><button data-sort="'+c[0]+'"'+(on?' data-on':'')+'>'+c[1]+'<span class="ar">'+(on&&F.dir<0?'▼':'▲')+'</span></button></th>'; }).join("")+'</tr></thead>';
+  var body = "";
+  if (!s.length) body = '<tr class="empty-row"><td colspan="'+COLS.length+'">No characters match these filters.</td></tr>';
+  else if (!F.group) body = s.map(row).join("");
+  else {
+    var keys = [], by = {};
+    s.forEach(function(p){
+      var ks = F.group==="arc" ? (p.arcs.length?p.arcs:["No storyline"]) : F.group==="status" ? [status(p)] : [p[F.group]||"—"];
+      ks.forEach(function(k){ if (F.arc && F.group==="arc" && k!==F.arc) return; if (!by[k]){by[k]=[];keys.push(k);} by[k].push(p); });
+    });
+    if (F.group==="arc") keys.sort(function(a,b){ return ARCS.indexOf(a)-ARCS.indexOf(b); });
+    if (F.group==="status") keys.sort(function(a,b){ return STATUSES.indexOf(a)-STATUSES.indexOf(b); });
+    body = keys.map(function(k){ return '<tr class="gh"><td colspan="'+COLS.length+'"><h2>'+esc(k)+'</h2><span class="label">'+by[k].length+'</span></td></tr>'+by[k].map(row).join(""); }).join("");
+  }
+  $("grid").innerHTML = '<table><colgroup>'+COLS.map(function(c){ return '<col class="'+CW[c[0]]+'">'; }).join("")+'</colgroup>'+head+'<tbody>'+body+'</tbody></table>';
+  $("grid").querySelectorAll("tr.r").forEach(function(tr){ Array.prototype.forEach.call(tr.children, function(td,k){ if (COLS[k]) td.setAttribute("data-label", COLS[k][1]); }); });
+}
+function busy(){ var a = document.activeElement; return a && (a.classList.contains("cin") || a.id==="dNote" || (a.closest && a.closest("#addForm"))); }
+function refresh(){
+  if (busy()){ pendingRender = true; return; }
+  pendingRender = false; render();
+  if (cur>-1 && !$("drawer").hidden) openProfile(cur, true);
+}
+
+/* ---------- drawer ---------- */
+function findByName(n){ n = n.toLowerCase().trim(); return CAST.filter(function(p){ return p.name.toLowerCase()===n; })[0]; }
+function rivalHTML(r){
+  if (!r) return '<span class="note">None listed</span>';
+  return r.split(/·|,/).map(function(x){ return x.trim(); }).filter(Boolean).map(function(x){
+    var m = findByName(x);
+    return m ? '<button class="rv" data-i="'+m.i+'">'+esc(x)+' →</button>' : '<span class="rv">'+esc(x)+'</span>';
+  }).join("");
+}
+function contactFact(v){
+  if (!KEY) return '<div class="locked">LOCKED</div>';
+  if (!v) return '<div class="note">Not added yet</div>';
+  return '<div class="cv"><span>'+esc(v)+'</span><button class="cp" data-copy="'+esc(v)+'">Copy</button></div>';
+}
+function showDrawer(){ $("drawer").hidden = false; $("scrim").hidden = false; }
+function openProfile(i, keepScroll){
+  var list = shown(), p = CAST[i]; cur = i;
+  var pos = list.indexOf(p), back = CAST.filter(function(o){ return o!==p && (o.rivals||"").toLowerCase().indexOf(p.name.toLowerCase())>-1; });
+  var st = $("drawer").scrollTop;
+  $("drawer").innerHTML =
+    '<div class="d-top"><div class="kicker">'+esc(p.role)+(p.title?' · '+esc(p.title):'')+'</div><button class="x" id="dClose" aria-label="Close">×</button></div>' +
+    '<h2 class="d-name" id="dName">'+esc(p.name)+'</h2>' +
+    (p.hook?'<p class="d-hook">“'+esc(p.hook)+'”</p>':'') +
+    '<section class="casting" aria-label="Casting">' +
+      '<div class="row" style="justify-content:space-between"><span class="kicker">Casting</span><div style="width:150px">'+stSelect(p,"dStatus")+'</div></div>' +
+      '<label style="display:flex;flex-direction:column;gap:6px"><span class="label">Casting notes</span><textarea class="inp" id="dNote" rows="4" placeholder="Availability, fees, conditions, next step…">'+esc(note(p))+'</textarea></label>' +
+      '<div class="actions"><span class="msg" style="margin-right:auto;align-self:center">'+where()+'</span><button class="btn solid" id="dSaveNote" type="button">Save notes</button></div>' +
+    '</section>' +
+    '<div class="facts">' +
+      '<div><div class="label">Farm / stud</div><div>'+(esc(p.affiliation)||'—')+'</div></div>' +
+      '<div><div class="label">Country</div><div>'+(esc(p.country)||'—')+'</div></div>' +
+      '<div><div class="label">Email</div>'+contactFact(cval(p,"email"))+'</div>' +
+      '<div><div class="label">Phone</div>'+contactFact(cval(p,"phone"))+'</div>' +
+      '<div style="grid-column:1/-1"><div class="label">Storyline</div><div class="arcs" style="margin-top:6px">'+arcTags(p)+'</div></div>' +
+    '</div>' +
+    '<div><div class="label">Profile</div>'+(p.bio?'<p class="bio">'+esc(p.bio)+'</p>':'<p class="note" style="margin-top:8px">No profile written yet.</p>')+'</div>' +
+    '<div><div class="label">Rivals</div><div class="rivals">'+rivalHTML(p.rivals)+'</div></div>' +
+    (back.length?'<div><div class="label">Named as a rival by</div><div class="rivals">'+back.map(function(o){ return '<button class="rv" data-i="'+o.i+'">'+esc(o.name)+' →</button>'; }).join("")+'</div></div>':'') +
+    (p.note?'<p class="note">'+esc(p.note)+'</p>':'') +
+    (p.added?'<div id="rmWrap"><button class="btn danger" id="rmBtn" type="button">Remove this character</button></div>':'') +
+    '<div class="nav"><button id="dPrev"'+(pos>0?'':' hidden')+'>← '+(pos>0?esc(list[pos-1].name):'')+'</button><span></span><button id="dNext"'+(pos>-1&&pos<list.length-1?'':' hidden')+'>'+(pos>-1&&pos<list.length-1?esc(list[pos+1].name):'')+' →</button></div>';
+  showDrawer();
+  if (keepScroll) $("drawer").scrollTop = st; else { $("drawer").scrollTop = 0; $("dClose").focus(); }
+}
+function openAdd(){
+  cur = -1;
+  $("drawer").innerHTML =
+    '<div class="d-top"><div class="kicker">New character</div><button class="x" id="dClose" aria-label="Close">×</button></div>' +
+    '<h2 class="d-name" id="dName">Add a character</h2>' +
+    '<form class="form" id="addForm" novalidate>' +
+    '<label class="full"><span class="label">Name <span class="req">*</span></span><input class="inp" id="nName" autocomplete="off"></label>' +
+    '<label><span class="label">Role <span class="req">*</span></span><input class="inp" id="nRole" list="roleList" autocomplete="off" placeholder="e.g. Handler"><datalist id="roleList">'+Array.from(new Set(CAST.map(function(p){return p.role;}))).map(function(r){ return '<option value="'+esc(r)+'">'; }).join("")+'</datalist></label>' +
+    '<label><span class="label">Title</span><input class="inp" id="nTitle" autocomplete="off" placeholder="e.g. Manager"></label>' +
+    '<label><span class="label">Farm / stud / organisation</span><input class="inp" id="nAff" autocomplete="off"></label>' +
+    '<label><span class="label">Country</span><input class="inp" id="nCountry" autocomplete="off"></label>' +
+    '<label><span class="label">Email</span><input class="inp" id="nEmail" type="email" autocomplete="off" placeholder="name@example.com"></label>' +
+    '<label><span class="label">Phone</span><input class="inp" id="nPhone" type="tel" autocomplete="off" placeholder="+974 …"></label>' +
+    (KEY ? '' : '<label class="full"><span class="label">Team password (needed to save email and phone)</span><input class="inp" id="nPw" type="password" autocomplete="off"></label>') +
+    '<label><span class="label">Storyline</span><select class="inp" id="nArc"><option value="">No storyline</option>'+ARCS.map(function(a){ return '<option>'+esc(a)+'</option>'; }).join("")+'</select></label>' +
+    '<label><span class="label">Casting status</span><select class="inp" id="nStatus">'+STATUSES.map(function(s){ return '<option>'+s+'</option>'; }).join("")+'</select></label>' +
+    '<label class="full"><span class="label">Hook (one line)</span><input class="inp" id="nHook" autocomplete="off"></label>' +
+    '<label class="full"><span class="label">Profile</span><textarea class="inp" id="nBio" rows="4" placeholder="Who they are and why they matter to the story"></textarea></label>' +
+    '<label class="full"><span class="label">Rivals</span><input class="inp" id="nRivals" autocomplete="off" placeholder="Separate names with ·"></label>' +
+    '<label class="full"><span class="label">Casting notes</span><textarea class="inp" id="nNote" rows="3" placeholder="Availability, fees, conditions, next step…"></textarea></label>' +
+    '<p class="note full" id="addMsg">'+where()+'</p>' +
+    '<div class="actions full"><button class="btn" type="button" id="addCancel">Cancel</button><button class="btn solid" type="submit">Add character</button></div>' +
+    '</form>';
+  showDrawer(); $("drawer").scrollTop = 0; $("nName").focus();
+}
+function submitAdd(){
+  var v = function(id){ return $(id).value.trim(); };
+  var m = $("addMsg");
+  function fail(msg, el){ m.textContent = msg; m.style.color = "var(--s-decl)"; if (el) el.focus(); }
+  if (!v("nName") || !v("nRole")) return fail("Add a name and a role to save this character.", v("nName")?$("nRole"):$("nName"));
+  var em = v("nEmail"), ph = v("nPhone");
+  var keyReady = Promise.resolve(KEY);
+  if ((em || ph) && !KEY){
+    var pw = $("nPw").value;
+    if (!pw) return fail("Enter the team password to save the email and phone.", $("nPw"));
+    m.textContent = "Checking password…"; m.style.color = "";
+    keyReady = deriveKey(pw).then(function(k){ return dec(k, CHECK).then(function(s){ if (s!=="arabians-ok") throw 0; KEY = k; lockUI(); return decryptAll().then(function(){ return k; }); }); });
+  }
+  keyReady.then(function(){
+    var id = slug(v("nName")); if (CAST.some(function(p){ return p.id===id; })) id += "-" + Date.now().toString(36);
+    var p = {name:v("nName"), role:v("nRole"), title:v("nTitle"), affiliation:v("nAff"), country:v("nCountry"), arc:v("nArc"), hook:v("nHook"), bio:v("nBio"), rivals:v("nRivals"), note:"", status:"Candidate", createdAt:Date.now()};
+    var c = {status:v("nStatus"), note:v("nNote")};
+    ADDED[id] = p; CASTING[id] = c;
+    if (em || ph) CONTACTS[id] = {email:em, phone:ph};
+    rebuild();
+    if (document.activeElement) document.activeElement.blur();
+    render(); openProfile(CAST.length-1);
+    write("characters", id, p).then(function(){ return write("casting", id, c); }).then(function(){
+      if (!(em || ph)) return;
+      return enc(KEY, JSON.stringify(CONTACTS[id])).then(function(o){ RAW[id] = o; return write("contacts", id, o); });
+    }).then(function(){ toast("Added "+p.name); }, saveErr);
+  }, function(){ fail("Wrong team password. Try again, or leave email and phone empty.", $("nPw")); });
+}
+function close(){ $("drawer").hidden = true; $("scrim").hidden = true; cur = -1; if (pendingRender) refresh(); if (lastFocus && document.contains(lastFocus)) lastFocus.focus(); }
+function step(d){ var l = shown(), k = l.indexOf(CAST[cur]); if (k>-1 && l[k+d]) openProfile(l[k+d].i); }
+function setStatus(p, s){
+  var c = Object.assign({status:status(p), note:note(p)}, CASTING[p.id]); c.status = s; CASTING[p.id] = c;
+  write("casting", p.id, c).then(function(){ toast(p.name+": "+s); }, saveErr);
+  refresh();
+}
+
+/* ---------- events ---------- */
+$("pipe").addEventListener("click", function(e){ var b = e.target.closest("[data-st]"); if (b){ F.status = b.dataset.st; render(); } });
+$("q").addEventListener("input", function(){ F.q = this.value; render(); });
+$("fRole").addEventListener("change", function(){ F.role = this.value; render(); });
+$("fArc").addEventListener("change", function(){ F.arc = this.value; render(); });
+$("fGroup").addEventListener("change", function(){ F.group = this.value; render(); });
+$("count").addEventListener("click", function(e){ if (e.target.id==="clr"){ F.q=F.role=F.arc=F.status=""; $("q").value=""; render(); } });
+$("addBtn").addEventListener("click", function(e){ lastFocus = e.currentTarget; openAdd(); });
+$("grid").addEventListener("click", function(e){
+  if (e.target.closest(".cin,.stsel")) return;
+  var sb = e.target.closest("[data-sort]");
+  if (sb){ var k = sb.dataset.sort; if (F.sort===k) F.dir = -F.dir; else { F.sort = k; F.dir = 1; } render(); return; }
+  var b = e.target.closest("tr.r"); if (b){ lastFocus = b; openProfile(+b.dataset.i); }
+});
+$("grid").addEventListener("keydown", function(e){
+  if (e.target.matches(".cin")){ if (e.key==="Enter") e.target.blur(); return; }
+  if ((e.key==="Enter"||e.key===" ") && e.target.matches("tr.r")){ e.preventDefault(); lastFocus = e.target; openProfile(+e.target.dataset.i); }
+});
+document.addEventListener("change", function(e){ var s = e.target.closest && e.target.closest("[data-st-for]"); if (s) setStatus(CAST[+s.dataset.stFor], s.value); });
+$("drawer").addEventListener("click", function(e){
+  if (e.target.closest("#dClose") || e.target.closest("#addCancel")) return close();
+  if (e.target.closest("#dPrev")) return step(-1);
+  if (e.target.closest("#dNext")) return step(1);
+  var cp = e.target.closest("[data-copy]");
+  if (cp){ var v = cp.dataset.copy; try { navigator.clipboard.writeText(v).then(function(){ toast("Copied"); }, function(){ toast(v); }); } catch(_){ toast(v); } return; }
+  if (e.target.closest("#dSaveNote")){
+    var p = CAST[cur], c = Object.assign({status:status(p), note:""}, CASTING[p.id]); c.note = $("dNote").value.trim(); CASTING[p.id] = c;
+    $("dNote").blur(); write("casting", p.id, c).then(function(){ toast("Notes saved for "+p.name); }, saveErr); refresh(); return;
+  }
+  if (e.target.closest("#rmBtn")){ $("rmWrap").innerHTML = '<div class="confirm"><span>Remove '+esc(CAST[cur].name)+' from the casting list?</span><button class="btn danger" id="rmYes" type="button">Remove</button><button class="btn" id="rmNo" type="button">Keep</button></div>'; return; }
+  if (e.target.closest("#rmNo")) return openProfile(cur, true);
+  if (e.target.closest("#rmYes")){
+    var r = CAST[cur]; delete ADDED[r.id]; delete CASTING[r.id]; rebuild(); close(); render();
+    write("characters", r.id, null).then(function(){ return write("casting", r.id, null); }).then(function(){ toast("Removed "+r.name); }, saveErr); return;
+  }
+  var b = e.target.closest("[data-i]"); if (b) openProfile(+b.dataset.i);
+});
+$("drawer").addEventListener("submit", function(e){ if (e.target.id==="addForm"){ e.preventDefault(); submitAdd(); } });
+$("scrim").addEventListener("click", close);
+document.addEventListener("keydown", function(e){
+  if ($("drawer").hidden) return;
+  if (e.key==="Escape") return close();
+  if (cur<0 || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if (e.key==="ArrowRight") step(1); else if (e.key==="ArrowLeft") step(-1);
+});
+document.addEventListener("focusout", function(){ setTimeout(function(){ if (pendingRender && !busy()) refresh(); }, 0); });
+
+/* ---------- contacts (encrypted with the team password) ---------- */
+function b64(buf){ var s="", a=new Uint8Array(buf); for (var i=0;i<a.length;i++) s+=String.fromCharCode(a[i]); return btoa(s); }
+function unb64(s){ var b=atob(s), a=new Uint8Array(b.length); for (var i=0;i<b.length;i++) a[i]=b.charCodeAt(i); return a; }
+function deriveKey(pw){
+  return crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]).then(function(base){
+    return crypto.subtle.deriveKey({name:"PBKDF2", salt:unb64(CHECK.salt), iterations:210000, hash:"SHA-256"}, base, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]);
+  });
+}
+function dec(key, o){ return crypto.subtle.decrypt({name:"AES-GCM", iv:unb64(o.iv)}, key, unb64(o.ct)).then(function(b){ return new TextDecoder().decode(b); }); }
+function enc(key, text){ var iv = crypto.getRandomValues(new Uint8Array(12)); return crypto.subtle.encrypt({name:"AES-GCM", iv:iv}, key, new TextEncoder().encode(text)).then(function(ct){ return {iv:b64(iv), ct:b64(ct)}; }); }
+var LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
+function lockUI(msg, err){
+  var h = '<span class="label">Email &amp; phone</span>';
+  if (!window.crypto || !crypto.subtle){ $("lock").innerHTML = h+'<span class="msg">Open this page over https to use contacts.</span>'; return; }
+  if (!KEY) h += '<form id="unlock" autocomplete="off"><input class="inp" id="pw" type="password" placeholder="Team password" aria-label="Team password to unlock email and phone"><button class="btn solid" type="submit">'+LOCK_SVG+'Unlock</button></form>';
+  else h += '<span class="msg ok">Unlocked. Click a cell to edit.</span><button class="btn" id="relock" type="button">'+LOCK_SVG+'Lock</button>';
+  if (msg) h += '<span class="msg'+(err?' err':'')+'">'+esc(msg)+'</span>';
+  $("lock").innerHTML = h;
+}
+function decryptAll(){
+  if (!KEY){ CONTACTS = {}; return Promise.resolve(); }
+  var next = {};
+  return Promise.all(Object.keys(RAW).map(function(k){ return dec(KEY, RAW[k]).then(function(s){ try { next[k] = JSON.parse(s); } catch(_){} }, function(){}); }))
+    .then(function(){ CONTACTS = next; });
+}
+$("lock").addEventListener("submit", function(e){
+  e.preventDefault(); var pw = $("pw").value; if (!pw) return;
+  lockUI("Checking…");
+  deriveKey(pw).then(function(k){
+    return dec(k, CHECK).then(function(s){ if (s!=="arabians-ok") throw 0; KEY = k; lockUI(); return decryptAll().then(refresh); });
+  }).catch(function(){ lockUI("Wrong password. Try again.", true); var p=$("pw"); if (p) p.focus(); });
+});
+$("lock").addEventListener("click", function(e){ if (e.target.closest("#relock")){ KEY = null; CONTACTS = {}; lockUI(); refresh(); } });
+$("grid").addEventListener("focusout", function(e){
+  var el = e.target; if (!el.classList || !el.classList.contains("cin")) return;
+  var p = CAST[+el.dataset.ci], f = el.dataset.f, v = el.value.trim();
+  if (!KEY || cval(p,f) === v) return;
+  var c = Object.assign({email:"", phone:""}, CONTACTS[p.id]); c[f] = v; CONTACTS[p.id] = c;
+  enc(KEY, JSON.stringify(c)).then(function(o){ RAW[p.id] = o; return write("contacts", p.id, o); }).then(function(){ toast("Saved "+p.name); }, saveErr);
+});
+
+/* ---------- boot ---------- */
+rebuild(); render(); lockUI();
+(async function(){
+  var db = null;
+  try { if (window.claude && window.claude.use) db = await window.claude.use("db"); } catch(_){}
+  if (!db){
+    ADDED = localGet("characters"); CASTING = localGet("casting"); RAW = localGet("contacts");
+    rebuild(); refresh(); return;
+  }
+  STORE.mode = "shared"; STORE.db = db;
+  var t0 = setTimeout(function(){ toast("Can't reach the saved casting data yet. Check your connection."); }, 10000);
+  function watch(coll, apply){
+    db.collection(coll).onSnapshot(function(snap){
+      if (!snap.metadata.fromCache) clearTimeout(t0);
+      var m = {}; snap.docs.forEach(function(d){ if (d.exists) m[d.id] = d.data(); });
+      apply(m);
+    }, function(){ toast("Live updates stopped. Reopen the page to see the latest changes."); });
+  }
+  watch("characters", function(m){ ADDED = m; rebuild(); refresh(); });
+  watch("casting", function(m){ CASTING = m; refresh(); });
+  watch("contacts", function(m){ RAW = m; decryptAll().then(refresh); });
+})();
+</script>
+</body></html>
