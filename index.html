@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: casting board in the Shot Tracker's look. Ink ground, gold hairlines; pipeline strip, sticky filter bar, table, side drawer. Single dark look by choice. */
+/* Layout: casting board mirroring the Schedule of Characters workbook. Ink ground, gold hairlines; pipeline strip, sticky filter bar, sectioned table, side drawer. Single dark look by choice. */
 :root{
   color-scheme: dark;
   --ink:#06080C; --panel:#121722; --panel2:#181E2B;
@@ -11,7 +11,6 @@
   --mute:rgba(243,238,226,.66); --mute2:rgba(243,238,226,.46);
   --line:rgba(201,168,76,.22); --line-soft:rgba(201,168,76,.11); --line-strong:rgba(201,168,76,.55);
   --s-cand:#AEB5C2; --s-appr:#E3C04F; --s-talk:#8FA7D6; --s-conf:#7BB59E; --s-decl:#E5514A;
-  --a1:#E2A083; --a2:#8FA7D6; --a3:#D98BA6; --a4:#7BB59E; --a5:#B9A0E6;
   --f-display:"Cormorant Garamond",Georgia,serif;
   --f-ui:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -23,14 +22,15 @@ body{margin:0;background:var(--ink);color:var(--cream);font:300 15px/1.55 var(--
 button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 button{cursor:pointer;background:none;border:0;padding:0}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.wrap{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.wrap{max-width:1500px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
 @media(min-width:900px){.wrap{padding-left:max(40px,env(safe-area-inset-left,0px));padding-right:max(40px,env(safe-area-inset-right,0px))}}
 .kicker,.label{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
 .label{color:var(--mute2);letter-spacing:.18em;font-size:9.5px}
 h1{font:400 clamp(36px,5vw,58px)/1.02 var(--f-display);margin:10px 0 12px;text-wrap:balance}
-h1 em{color:var(--gold);font-style:italic}
-.lede{color:var(--mute);max-width:64ch;margin:0}
+.lede{color:var(--mute);max-width:66ch;margin:0}
 .head{display:flex;flex-direction:column;gap:28px;padding-bottom:28px}
+.head-top{display:flex;flex-wrap:wrap;gap:20px 40px;justify-content:space-between;align-items:flex-end}
+.head-top>div{min-width:0;flex:1 1 420px}
 
 /* pipeline */
 .pipe{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border:1px solid var(--line);border-radius:4px;overflow:hidden}
@@ -51,7 +51,7 @@ h1 em{color:var(--gold);font-style:italic}
   padding-block:16px;border-block:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.search{flex:1 1 260px;position:relative;min-width:0}
+.search{flex:1 1 240px;position:relative;min-width:0}
 .search svg{position:absolute;left:11px;top:50%;width:15px;height:15px;transform:translateY(-50%);color:var(--mute2)}
 .inp{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:9px 11px;font-size:14px;width:100%;min-width:0}
 .search .inp{padding-left:34px}
@@ -60,28 +60,32 @@ select.inp.on,.inp:focus{border-color:var(--line-strong);outline:none}
 .count{font-family:var(--f-mono);font-size:11px;color:var(--mute2)}
 .clear{font-family:var(--f-mono);font-size:11px;color:var(--gold);text-decoration:underline;text-underline-offset:3px}
 .spacer{flex:1}
-@media(max-width:760px){.bar select.inp{flex:1 1 140px}.bar .btn.solid{flex:1 1 100%;justify-content:center}}
-.btn{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;padding:10px 14px;border:1px solid var(--line-strong);border-radius:3px;color:var(--gold);white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;padding:10px 14px;border:1px solid var(--line-strong);border-radius:3px;color:var(--gold);white-space:nowrap}
 .btn:hover{background:rgba(201,168,76,.1)}
-.btn svg{width:13px;height:13px}
+.btn svg{width:13px;height:13px;flex:none}
 .btn.solid{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 .btn.solid:hover{background:var(--goldhi)}
 .btn.danger{color:var(--s-decl);border-color:rgba(229,81,74,.5)}
+.btn[disabled]{opacity:.5;cursor:progress}
 .lock{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .lock form{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .lock .inp{width:190px;padding-block:7px}
 .lock .btn{padding-block:8px}
 .msg{font-family:var(--f-mono);font-size:11px;color:var(--mute2)}
 .msg.err{color:var(--s-decl)}.msg.ok{color:var(--s-conf)}
+.chk{display:inline-flex;align-items:center;gap:7px;font-family:var(--f-mono);font-size:11px;color:var(--mute);cursor:pointer}
+.chk input{accent-color:var(--gold);width:14px;height:14px}
+@media(max-width:760px){.bar select.inp{flex:1 1 140px}.bar .btn{flex:1 1 140px}}
 
 /* table */
 .tbl-wrap{margin-top:24px;border:1px solid var(--line);border-radius:4px;background:var(--panel);overflow-x:auto}
 table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:1320px}
-col.c-name{width:14%}col.c-role{width:10%}col.c-aff{width:11%}col.c-cty{width:7%}col.c-arc{width:11%}col.c-em{width:14%}col.c-ph{width:10%}col.c-st{width:11%}col.c-note{width:12%}
+col.c-num{width:50px}col.c-name{width:15%}col.c-aff{width:10%}col.c-cty{width:7%}col.c-story{width:17%}col.c-loc{width:12%}col.c-em{width:11%}col.c-ph{width:8%}col.c-st{width:10%}col.c-note{width:10%}
 th{background:var(--panel2);text-align:left;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute2);font-weight:400;padding:0;border-bottom:1px solid var(--line)}
 th button{display:flex;align-items:center;gap:6px;width:100%;padding:14px 16px;text-align:left;text-transform:inherit;letter-spacing:inherit}
 th button:hover,th button[data-on]{color:var(--gold)}
 th .ar{opacity:0;font-size:8px}th button[data-on] .ar{opacity:1}
+th.num-h{padding:14px 16px}
 td{padding:16px;border-bottom:1px solid var(--line-soft);vertical-align:top;font-size:13.5px;line-height:1.45;overflow-wrap:anywhere}
 tbody tr:last-child td{border-bottom:0}
 tbody tr.r{cursor:pointer;transition:background .12s}
@@ -90,25 +94,35 @@ tbody tr.r:hover .nm{color:var(--goldhi)}
 tbody tr.r:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
 tr.r.declined td{opacity:.55}
 tr.r.declined td.st{opacity:1}
+td.num{font-family:var(--f-mono);font-size:11px;color:var(--mute2);font-variant-numeric:tabular-nums;padding-top:20px}
 .nm{font:500 20px/1.15 var(--f-display);color:var(--cream);overflow-wrap:normal}
 .tt{font-size:12px;color:var(--mute2);margin-top:3px}
 .dim{color:var(--mute)}
 .none{color:var(--mute2)}
-.role-cell{font-size:13px;color:var(--gold)}
-.arcs{display:flex;flex-wrap:wrap;gap:5px}
-.arc{font-family:var(--f-mono);font-size:10px;letter-spacing:.03em;padding:3px 8px;border-radius:2px;border-left:2px solid var(--c);color:var(--mute);background:rgba(243,238,226,.04)}
+.cat-cell{font-size:12.5px;color:var(--gold);overflow-wrap:normal}
+.story{font-size:12.5px;color:var(--mute);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.story b{color:var(--cream);font-weight:400}
 .note-cell{font-size:12.5px;color:var(--mute);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.added-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--a2);margin-left:8px;vertical-align:middle}
+.added-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#8FA7D6;margin-left:8px;vertical-align:middle}
 .stsel{appearance:none;width:100%;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:5px 22px 5px 9px;border-radius:999px;border:1px solid var(--c);color:var(--c);background:transparent;cursor:pointer;
   background-image:linear-gradient(45deg,transparent 50%,var(--c) 50%),linear-gradient(135deg,var(--c) 50%,transparent 50%);background-position:calc(100% - 12px) 52%,calc(100% - 8px) 52%;background-size:4px 4px;background-repeat:no-repeat}
 .stsel option{background:var(--panel);color:var(--cream)}
+.locs{display:flex;flex-wrap:wrap;gap:4px}
+.loc{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.06em;padding:3px 6px;border-radius:2px;border:1px dashed rgba(243,238,226,.18);color:var(--mute2);line-height:1.2;transition:all .12s}
+.loc:hover{border-color:var(--line-strong);color:var(--cream)}
+.loc[aria-pressed="true"]{border:1px solid var(--gold);background:rgba(201,168,76,.16);color:var(--goldhi)}
+.loc-list{display:flex;flex-direction:column;gap:6px}
+.loc-opt{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line-soft);border-radius:3px;cursor:pointer;font-size:14px}
+.loc-opt:hover{border-color:var(--line-strong)}
+.loc-opt input{accent-color:var(--gold);width:15px;height:15px;flex:none}
+.loc-opt .venue{color:var(--mute2);font-size:12.5px;margin-left:auto;text-align:right}
 .locked{font-family:var(--f-mono);font-size:11px;color:var(--mute2);letter-spacing:.2em}
 .cin{display:block;width:calc(100% + 16px);margin:-6px -8px;background:transparent;border:1px solid transparent;border-radius:3px;padding:5px 7px;font-size:13px;color:var(--cream)}
 .cin:hover{border-color:var(--line)}
 .cin:focus{border-color:var(--line-strong);background:var(--ink);outline:none}
 .cin::placeholder{color:var(--mute2)}
-tr.gh td{background:rgba(201,168,76,.05);padding:12px 16px;border-bottom:1px solid var(--line)}
-tr.gh h2{display:inline;font:400 20px var(--f-display);margin:0 10px 0 0}
+tr.gh td{background:rgba(201,168,76,.06);padding:12px 16px;border-bottom:1px solid var(--line);border-top:1px solid var(--line)}
+tr.gh h2{display:inline;font:400 21px var(--f-display);margin:0 10px 0 0}
 .empty-row td{text-align:center;padding:44px;color:var(--mute)}
 
 @media(max-width:760px){
@@ -120,8 +134,9 @@ tr.gh h2{display:inline;font:400 20px var(--f-display);margin:0 10px 0 0}
   tbody tr.r{position:relative;background:var(--panel);border:1px solid var(--line-soft);border-radius:4px;padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
   tbody tr.r td{padding:0;border:0;min-width:0}
   tbody tr.r td::before{content:attr(data-label);display:block;font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mute2);margin-bottom:4px}
+  tbody tr.r td.num{grid-column:1/-1;order:-3;padding:0;font-size:10px}
+  tbody tr.r td.num::before,tbody tr.r td.n::before,tbody tr.r td.st::before{display:none}
   tbody tr.r td.n{grid-column:1/-1;order:-2;padding-right:120px}
-  tbody tr.r td.n::before,tbody tr.r td.st::before{display:none}
   tbody tr.r td.st{position:absolute;right:18px;top:16px;width:112px}
   tbody tr.r td.wide{grid-column:1/-1}
   .cin{width:100%;margin:0;border-color:var(--line-soft)}
@@ -131,7 +146,7 @@ tr.gh h2{display:inline;font:400 20px var(--f-display);margin:0 10px 0 0}
 
 /* drawer */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(580px,100%);z-index:21;background-color:#121722;border-left:1px solid var(--line);
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(600px,100%);z-index:21;background-color:#121722;border-left:1px solid var(--line);
   overflow-y:auto;padding:calc(28px + env(safe-area-inset-top,0px)) max(28px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) 28px;
   display:flex;flex-direction:column;gap:20px;animation:slide .22s ease-out}
 @keyframes slide{from{transform:translateX(24px)}}
@@ -150,6 +165,8 @@ button.rv{color:var(--cream);border-color:var(--line-strong)}
 button.rv:hover{background:rgba(201,168,76,.12)}
 .casting{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
 .casting textarea{resize:vertical;line-height:1.5}
+.casting select.inp{width:100%}
+.fld{display:flex;flex-direction:column;gap:6px;min-width:0}
 .cv{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .cp{font-family:var(--f-mono);font-size:10px;color:var(--gold);border:1px solid var(--line);border-radius:2px;padding:2px 6px}
 .nav{display:flex;justify-content:space-between;gap:10px;margin-top:auto;padding-top:16px;border-top:1px solid var(--line-soft)}
@@ -169,10 +186,12 @@ button.rv:hover{background:rgba(201,168,76,.12)}
 
 <div class="wrap">
   <header class="head">
-    <div>
-      <div class="kicker">The Arabians · Season One</div>
-      <h1>Characters Casting</h1>
-      <p class="lede">Track every character from first contact to confirmed. Change a status straight from the list, keep casting notes in each profile, and add people as casting develops. Email and phone stay locked until you enter the team password.</p>
+    <div class="head-top">
+      <div>
+        <div class="kicker">The Arabians · Season One</div>
+        <h1>Characters Casting</h1>
+        <p class="lede">The Schedule of Characters, live. Track every character from first contact to confirmed, flag who to focus on at each shoot location, keep casting notes, and download the schedule as an Excel sheet whenever you need it.</p>
+      </div>
     </div>
     <div class="pipe" id="pipe" role="group" aria-label="Filter by casting status"></div>
   </header>
@@ -180,12 +199,13 @@ button.rv:hover{background:rgba(201,168,76,.12)}
   <div class="bar">
     <div class="row">
       <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-        <input class="inp" id="q" type="search" placeholder="Search names, farms, countries, notes…" aria-label="Search characters"></label>
-      <select class="inp" id="fRole" aria-label="Filter by role"></select>
-      <select class="inp" id="fArc" aria-label="Filter by storyline"></select>
+        <input class="inp" id="q" type="search" placeholder="Search names, studs, countries, storylines, notes…" aria-label="Search characters"></label>
+      <select class="inp" id="fCat" aria-label="Filter by category"></select>
+      <select class="inp" id="fLoc" aria-label="Filter by shoot location"></select>
       <select class="inp" id="fGroup" aria-label="Group by">
-        <option value="">No grouping</option><option value="status">Group by status</option><option value="role">Group by role</option><option value="arc">Group by storyline</option><option value="country">Group by country</option>
+        <option value="category">Group by category</option><option value="location">Group by shoot location</option><option value="status">Group by status</option><option value="country">Group by country</option><option value="">No grouping</option>
       </select>
+      <button class="btn" id="xlsxBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>Download Excel</button>
       <button class="btn solid" id="addBtn" type="button">+ Add character</button>
     </div>
     <div class="row">
@@ -203,59 +223,69 @@ button.rv:hover{background:rgba(201,168,76,.12)}
 <aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dName"></aside>
 
 <script>
-var SEED = [{"name": "Turki Al Othman", "role": "Team CEO", "title": "Owner", "affiliation": "Ajmal Stud (Saudi Arabia)", "country": "Saudi Arabia", "arc": "The Arab Rising Stars", "hook": "Founded a stud at 17. World Champion at 20.", "bio": "At 23, one of the youngest stud owners on the GCAT and a full-time architecture student. His homebred stallion Sari became the first Saudi-bred male horse to win the World Championship — three years after he founded the farm. Dubai Stud took eight. His stated weakness: he gets emotionally attached to his horses and struggles to part with any of them.", "rivals": "Al Shaqab · Al Shahania", "status": "Confirmed", "note": ""}, {"name": "Khalid Al Jehani", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Al Shaqab (Qatar)", "country": "Qatar", "arc": "The Royal Rivalry", "hook": "He says Arnauld is winning. Raphael says Arnauld replaced him.", "bio": "Manager of Al Shaqab Stud — the most decorated farm in Qatar. Took over before Raphael Curti's exit; now defends Arnauld Mertens, the protégé who replaced him. Holds firm opinions: thinks Giulia is too inexperienced, accuses Abdelaziz Al Marzooqi of excessive gossip, and questions whether Al Shahania can sustain a model where the same person owns and manages.", "rivals": "Dubai Stud · Al Wajba · Al Shahania", "status": "Confirmed", "note": ""}, {"name": "Giulia Bontempi", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Hleetan (Qatar)", "country": "Italy", "arc": "The Loyalty Crisis", "hook": "24 years old. Fourth generation. Only woman in the room.", "bio": "Italian, 24, manager of Hleetan Stud and one of the very few female managers on the GCAT. Comes from a four-generation Arabian breeding family. Her plan: a long-horizon program reviving forgotten bloodlines to deliver exceptional horses in 5–10 years. In a relationship with Constantin, an assistant trainer at Al Shahania — they keep work strictly siloed. Frustrated that Olivia Strauch keeps her at arm's length: \"There are so few women in this field. We should support each other.\"", "rivals": "Al Shaqab (Khalid) · Al Wajba (Olivia)", "status": "Confirmed", "note": ""}, {"name": "Abdelaziz Al Marzooqi", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Dubai Stud (UAE)", "country": "UAE", "arc": "The Royal Rivalry", "hook": "Six years at #1. 'All eyes are on us.'", "bio": "30 years in the game. Dubai Stud has held the world's #1 ranking for six straight years under his watch — 100 employees, 400 horses he checks every day. Makes unannounced visits to Paolo's training center in Italy where Dubai Stud summers its horses. Walks the desert and dives the sea to decompress. His only goal: keep Dubai Stud at the top.", "rivals": "Al Shaqab · Ajman Stud", "status": "Confirmed", "note": ""}, {"name": "Khalid Al Omari", "role": "General Manager/Owner", "title": "Manager", "affiliation": "Ajman Stud (UAE)", "country": "UAE", "arc": "The Loyalty Crisis", "hook": "Inside the Emirates we compete. Abroad, we are one.", "bio": "Manager of Ajman Stud, close confidant of Sheikh Ammar. Refuses to install cameras to monitor staff — believes presence on the ground every day is the only way. Argues that for groomers to do their work properly, their personal lives have to be in order, so he gets involved when needed. Maintains a famously cooperative relationship with Abdelaziz at Dubai Stud — they openly share competition plans to avoid clashes.", "rivals": "Inside UAE: friendly · Abroad: united", "status": "Confirmed", "note": ""}, {"name": "Azzam Alqasem", "role": "Handler", "title": "Handler", "affiliation": "KSA Studs", "country": "Saudi Arabia", "arc": "The Arab Rising Stars", "hook": "My father gave us money for cars. We bought horses instead.", "bio": "Saudi Arabian, one of the very few Arab handlers competing at GCAT — and considered the best of them. Non-exclusive handler for two Saudi studs while running his own training center with his brother Abdullah. Defines himself as the underdog in a world dominated by Western handlers. Doesn't hold back: openly says Raphael has been declining since leaving Al Shaqab, and that he lacks the natural talent of Glenn or Paolo. A judge has called him \"the handler who treats his horses the harshest\" — controversial, debated, but undeniable in the ring.", "rivals": "Glenn Schoukens · Tom Oben", "status": "Confirmed", "note": ""}, {"name": "Arnauld Mertens", "role": "Handler", "title": "Handler", "affiliation": "Al Shaqab (Qatar)", "country": "Belgium", "arc": "The Royal Rivalry", "hook": "27 years old. Replaced his own mentor.", "bio": "Belgian, 27, the youngest handler on the GCAT circuit. Stepped into Al Shaqab the moment his mentor Raphael Curti was forced out. Wants the title of Handler of the Tour — wants to prove himself against older men who underestimate him because of his age. He underestimates them right back: openly criticises Gerald Kurtz's old-school methods and lack of physical fitness. On Raphael: \"A different kind of boss than the one I would like to be.\"", "rivals": "Glenn Schoukens · Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Raphael Curti", "role": "Handler", "title": "Handler", "affiliation": "Al Wajba (Qatar)", "country": "France", "arc": "May the Best Man Win", "hook": "He says exactly what he thinks. About everyone. Every time.", "bio": "French handler Raphaël Curti is the loudest, most combustible personality on the GCAT circuit — and he knows it, and he doesn't care. Self-made from the ground up, Raphaël built his reputation on exceptional horsemanship and an absolute refusal to keep his opinions to himself. He says exactly what he thinks, about anyone, at any time. Fiery, emotionally intense, and magnetically watchable, Raphaël treats the show ring the way he treats conversation: as a stage, and he is always the main act. He is a handler of real championship pedigree who has guided horses to prestigious titles worldwide — and if you didn't already know that, he will tell you.", "rivals": "Glenn Schoukens · Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Glenn Schoukens", "role": "Handler", "title": "Handler", "affiliation": "Hleetan & Ajman & Ajmal", "country": "Belgium", "arc": "The Loyalty Crisis, May the Best Man Win", "hook": "The next #1. His brother trains. He performs.", "bio": "Belgian handler Glenn Schoukens is widely considered the most exciting talent on the GCAT circuit right now. Composed and precise in the ring, he combines an elite competitive instinct with the kind of composure that takes years to develop — though he has developed it young. He operates across multiple top-tier studs simultaneously, an approach that demands not just skill but exceptional diplomatic intelligence. Away from competition, he runs a training center in Belgium with his brother Tom, dividing the roles instinctively: Glenn owns the ring, Tom shapes the horses. His stallion Berlin's standout scores at GCAT 2025 made clear what many already suspected — Glenn is no longer just a rising name. He is the name everyone else has to answer to.", "rivals": "Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Giacomo Capecci", "role": "Handler", "title": "Handler", "affiliation": "Al Shahania (Qatar)", "country": "Italy", "arc": "May the Best Man Win", "hook": "Often misread. Never misplaced.", "bio": "Italian handler Giacomo Capecci is calm, calculated, and quietly one of the most gifted horsemen on the GCAT circuit. He has an intuitive connection with horses that few can replicate — his approach is methodical rather than forceful, built on patience and reading an animal rather than imposing on it. Despite a serious demeanor that has often been misread as cold, those who know him describe him as a man who simply lets his work do the talking. He manages relationships with multiple stud farms without burning bridges, a rare skill in a world where loyalty is a weapon and everyone is watching.", "rivals": "Glenn Schoukens", "status": "Candidate", "note": "Casting not yet confirmed"}, {"name": "Paolo Capecci", "role": "Handler", "title": "Handler", "affiliation": "Dubai Stud (UAE)", "country": "Italy", "arc": "The Royal Rivalry, May the Best Man Win", "hook": "Being number one means everyone is gunning for you. Every single show.", "bio": "Widely regarded as the world's number one Arabian horse handler, Paolo Capecci operates at a level few can match. From his training center in Italy — 25 staff, 250 horses — he has built an empire of precision and excellence as Dubai Stud's star performer. Composed and elegantly methodical in the ring, Paolo is both the industry's gold standard and its most hunted target. With Glenn Schoukens closing fast and a new generation studying his every move, the question is no longer whether Paolo is the best — it's how long he can hold the crown.", "rivals": "Glenn Schoukens · Giacomo Capecci", "status": "Confirmed", "note": ""}, {"name": "Philippe Hosay", "role": "Handler", "title": "Handler", "affiliation": "Ajmal Stud (KSA)", "country": "Belgium", "arc": "The Arab Rising Stars", "hook": "Loyalty in this industry is hard to find — winning comes first.", "bio": "Belgian handler and GCAT veteran, Philippe Hosay has spent decades mastering the art of presenting purebred Arabians at the world's highest level. Now 55 and showing for Ajmal Stud in Saudi Arabia, he carries the trust of a young ambitious owner determined to bring Arabian glory back to its homeland — but his aging body and a rising generation of Arab handlers are closing in. A legend fighting to stay relevant in the sport he helped define.", "rivals": "", "status": "Confirmed", "note": ""}, {"hook": "", "bio": "", "rivals": "", "status": "Candidate", "note": "", "arc": "Beauty of Controversy", "name": "Faleh Al Nasr", "role": "Chairman of GCAT", "title": "Chairman", "affiliation": "GCAT", "country": "Qatar"}, {"hook": "", "bio": "", "rivals": "", "status": "Candidate", "note": "", "arc": "Beauty of Controversy", "name": "Mohamed Hammad", "role": "Expert", "title": "Expert", "affiliation": "", "country": "Egypt"}, {"hook": "", "bio": "", "rivals": "", "status": "Candidate", "note": "", "arc": "Beauty of Controversy", "name": "Christianne Chazel", "role": "Expert", "title": "Expert", "affiliation": "", "country": "France"}];
+var SEED = [{"id": "faleh-al-nasr", "name": "Faleh Al Nasr", "category": "GCAT", "title": "Chairman", "affiliation": "GCAT", "country": "Qatar", "storyline": "Takes viewers behind the scenes of the GCAT, explaining how the competition runs and what it takes to stage it.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "kholoud-al-hail", "name": "Kholoud Al Hail", "category": "GCAT", "title": "Executive Management", "affiliation": "GCAT", "country": "Qatar", "storyline": "Takes viewers behind the scenes of the GCAT, explaining how the competition runs and what it takes to stage it.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "jorge-cunha", "name": "Jorge Cunha", "category": "GCAT", "title": "Chief Marketing Officer", "affiliation": "GCAT", "country": "Portugal", "storyline": "Takes viewers behind the scenes of the GCAT, explaining how the competition runs and what it takes to stage it.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "his-excellency-sheikh-joaan-bin-hamad-al-thani", "name": "His Excellency Sheikh Joaan bin Hamad Al Thani", "category": "Stud Owners & Managers", "title": "Chairman", "affiliation": "Al Shaqab (Qatar)", "country": "Qatar", "storyline": "Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "his-highness-sheikh-mohammed-bin-khalifa-al-thani", "name": "His Highness Sheikh Mohammed bin Khalifa Al Thani", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Al Shahania Stud (Qatar)", "country": "Qatar", "storyline": "Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "sheikh-al-qaqa-bin-hamad-al-thani", "name": "His Excellency Sheikh Al-Qaqa bin Hamad Al Thani", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Al Wajba Stud (Qatar)", "country": "Qatar", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "nasser-al-mansouri", "name": "Nasser Al Mansouri", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Al Wajba Stud (Qatar)", "country": "Qatar", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Candidate", "hook": "", "bio": "Manager of Al Wajba Stud and a former professional rider for 16 years. Co-founded Al Wajba from the ground up with Sheikh Al-Qaqa. Strong and assertive, in contrast to Khalid Al Jehani at Al Shaqab.", "rivals": "", "note": ""}, {"id": "olivia-strauch", "name": "Olivia Strauch", "category": "Stud Owners & Managers", "title": "Breeding Manager", "affiliation": "Al Wajba Stud (Qatar)", "country": "Uruguay", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Candidate", "hook": "", "bio": "Breeding manager at Al Wajba Stud since June 2023. Puts horse welfare first and champions \"boutique breeding\": high quality, low quantity. Openly critical of mass breeding and of Gerald Kurtz's management at the Royal Cavalry of Oman.", "rivals": "", "note": ""}, {"id": "prince-abdulmajeed-bin-sultan-al-saud", "name": "Prince Abdulmajeed bin Sultan Al Saud", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Akmal Stud", "country": "Saudi Arabia", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "her-highness-sheikha-fatima-bint-hazza", "name": "Her Highness Sheikha Fatima bint Hazza", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Al Shiraa Arabians", "country": "UAE", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "turki-al-othman", "name": "Turki Al Othman", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Ajmal Stud (Saudi Arabia)", "country": "Saudi Arabia", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Confirmed", "hook": "Founded a stud at 17. World Champion at 20.", "bio": "At 23, one of the youngest stud owners on the GCAT and a full-time architecture student. His homebred stallion Sari became the first Saudi-bred male horse to win the World Championship — three years after he founded the farm. Dubai Stud took eight. His stated weakness: he gets emotionally attached to his horses and struggles to part with any of them.", "rivals": "Al Shaqab · Al Shahania", "note": ""}, {"id": "khalid-al-omari", "name": "Khalid Al Omari", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Ajman Stud (UAE)", "country": "UAE", "storyline": "Loyalty crisis: keeping handlers and staff loyal in a sport where the best talent is always for hire.", "status": "Confirmed", "hook": "Inside the Emirates we compete. Abroad, we are one.", "bio": "Manager of Ajman Stud, close confidant of Sheikh Ammar. Refuses to install cameras to monitor staff — believes presence on the ground every day is the only way. Argues that for groomers to do their work properly, their personal lives have to be in order, so he gets involved when needed. Maintains a famously cooperative relationship with Abdelaziz at Dubai Stud — they openly share competition plans to avoid clashes.", "rivals": "Inside UAE: friendly · Abroad: united", "note": ""}, {"id": "khalifa-al-shamsi", "name": "Khalifa Al Shamsi", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Ajman Stud (UAE)", "country": "UAE", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Candidate", "hook": "", "bio": "Manager of Ajman Stud, deeply loyal to H.H. Sheikh Ammar's vision. A passionate, boundary-pushing perfectionist set on proving Ajman Stud's horses are destined for greatness, against Dubai Stud at home and Al Shaqab abroad.", "rivals": "", "note": ""}, {"id": "faisal-al-kubaisi", "name": "Faisal Al Kubaisi", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Al Jumail Stud", "country": "Qatar", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "dean-lavy", "name": "Dean Lavy", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Al Shahania Stud (Qatar)", "country": "USA", "storyline": "Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "juan-manuel-hernandez", "name": "Juan Manuel Hernández", "category": "Stud Owners & Managers", "title": "Breeding Manager", "affiliation": "Al Shahania Stud (Qatar)", "country": "Spain", "storyline": "Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "khalid-al-jehani", "name": "Khalid Al Jehani", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Al Shaqab (Qatar)", "country": "Qatar", "storyline": "Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "status": "Confirmed", "hook": "He says Arnauld is winning. Raphael says Arnauld replaced him.", "bio": "Manager of Al Shaqab Stud — the most decorated farm in Qatar. Took over before Raphael Curti's exit; now defends Arnauld Mertens, the protégé who replaced him. Holds firm opinions: thinks Giulia is too inexperienced, accuses Abdelaziz Al Marzooqi of excessive gossip, and questions whether Al Shahania can sustain a model where the same person owns and manages.", "rivals": "Dubai Stud · Al Wajba · Al Shahania", "note": ""}, {"id": "antonia-bautista", "name": "Antonia Bautista", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Al Shiraa Arabians", "country": "Spain", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "rayan-abdulrahman-b-alsayqal", "name": "Rayan Abdulrahman B. Alsayqal", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Alsayaqul Stud", "country": "Saudi Arabia", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "abdelaziz-al-marzooqi", "name": "Abdelaziz Al Marzooqi", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Dubai Stud (UAE)", "country": "UAE", "storyline": "Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "status": "Confirmed", "hook": "Six years at #1. 'All eyes are on us.'", "bio": "30 years in the game. Dubai Stud has held the world's #1 ranking for six straight years under his watch — 100 employees, 400 horses he checks every day. Makes unannounced visits to Paolo's training center in Italy where Dubai Stud summers its horses. Walks the desert and dives the sea to decompress. His only goal: keep Dubai Stud at the top.", "rivals": "Al Shaqab · Ajman Stud", "note": ""}, {"id": "eng-mohammed-bin-abdulla-al-tawhidi", "name": "Eng. Mohammed bin Abdulla Al Tawhidi", "category": "Stud Owners & Managers", "title": "Breeding Manager", "affiliation": "Dubai Stud (UAE)", "country": "UAE", "storyline": "Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "nayla-hayek", "name": "Nayla Hayek", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Hanaya Arabian Stud", "country": "Switzerland", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "h-e-abdulla-al-misnad", "name": "H.E. Abdulla Al Misnad", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "Hleetan (Qatar)", "country": "Qatar", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "Owner of Hleetan Stud. His son Hamad Al Misnad is second in line.", "rivals": "", "note": ""}, {"id": "hamad-al-misnad", "name": "Hamad Al Misnad", "category": "Stud Owners & Managers", "title": "Second in Line (son of H.E. Abdulla Al Misnad)", "affiliation": "Hleetan (Qatar)", "country": "Qatar", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "Son of H.E. Abdulla Al Misnad and second in line at Hleetan Stud, a relatively new Qatari stud still under construction. Wants Hleetan known as \"the breeders\", winning with horses bred in-house rather than bought or leased. Hired Giulia Bontempi as manager. Sees Al Shaqab, Dubai Stud and Ajman Stud as the main competitors.", "rivals": "", "note": ""}, {"id": "giulia-bontempi", "name": "Giulia Bontempi", "category": "Stud Owners & Managers", "title": "Manager", "affiliation": "Hleetan (Qatar)", "country": "Italy", "storyline": "Loyalty crisis: keeping handlers and staff loyal in a sport where the best talent is always for hire.", "status": "Confirmed", "hook": "24 years old. Fourth generation. Only woman in the room.", "bio": "Italian, 24, manager of Hleetan Stud and one of the very few female managers on the GCAT. Comes from a four-generation Arabian breeding family. Her plan: a long-horizon program reviving forgotten bloodlines to deliver exceptional horses in 5–10 years. In a relationship with Constantin, an assistant trainer at Al Shahania — they keep work strictly siloed. Frustrated that Olivia Strauch keeps her at arm's length: \"There are so few women in this field. We should support each other.\"", "rivals": "Al Shaqab (Khalid) · Al Wajba (Olivia)", "note": ""}, {"id": "hamad-khalaf-al-mannai", "name": "Hamad Khalaf Al-Mannai", "category": "Stud Owners & Managers", "title": "Owner", "affiliation": "SK Arabian", "country": "Qatar", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "claudia-darius", "name": "Claudia Darius", "category": "Stud Owners & Managers", "title": "General Manager", "affiliation": "SK Arabian", "country": "", "storyline": "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "salman", "name": "Salman", "category": "Stud Owners & Managers", "title": "Representative of the Sultan's Office", "affiliation": "Royal Cavalry Oman", "country": "Oman", "storyline": "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "status": "Candidate", "hook": "", "bio": "Proud, outspoken representative of the Sultan's Office. Driving force behind Gerald Kurtz and the push to restore the Royal Cavalry of Oman to its former glory against new-money operations.", "rivals": "", "note": ""}, {"id": "arnauld-mertens", "name": "Arnauld Mertens", "category": "Handlers", "title": "Handler", "affiliation": "Al Shaqab (Qatar)", "country": "Belgium", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Confirmed", "hook": "27 years old. Replaced his own mentor.", "bio": "Belgian, 27, the youngest handler on the GCAT circuit. Stepped into Al Shaqab the moment his mentor Raphael Curti was forced out. Wants the title of Handler of the Tour — wants to prove himself against older men who underestimate him because of his age. He underestimates them right back: openly criticises Gerald Kurtz's old-school methods and lack of physical fitness. On Raphael: \"A different kind of boss than the one I would like to be.\"", "rivals": "Glenn Schoukens · Giacomo Capecci", "note": ""}, {"id": "azzam-alqasem", "name": "Azzam Alqasem", "category": "Handlers", "title": "Handler", "affiliation": "Alsayaqul Stud & KSA Studs", "country": "Saudi Arabia", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Confirmed", "hook": "My father gave us money for cars. We bought horses instead.", "bio": "Saudi Arabian, one of the very few Arab handlers competing at GCAT — and considered the best of them. Non-exclusive handler for two Saudi studs while running his own training center with his brother Abdullah. Defines himself as the underdog in a world dominated by Western handlers. Doesn't hold back: openly says Raphael has been declining since leaving Al Shaqab, and that he lacks the natural talent of Glenn or Paolo. A judge has called him \"the handler who treats his horses the harshest\" — controversial, debated, but undeniable in the ring.", "rivals": "Glenn Schoukens · Tom Oben", "note": ""}, {"id": "frank-sponle", "name": "Frank Spönle", "category": "Handlers", "title": "Handler", "affiliation": "Hanaya Arabian Stud", "country": "Germany", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "gerald-kurtz", "name": "Gerald Kurtz", "category": "Handlers", "title": "Exclusive Handler", "affiliation": "Royal Cavalry Oman", "country": "Austria", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Candidate", "hook": "", "bio": "52, the only exclusive handler for the Royal Cavalry of Oman, where he runs breeding, training and handling. His career rests on a single client. Clashes with Arnauld Mertens over age and experience; close friend of Tom Oben.", "rivals": "", "note": ""}, {"id": "giacomo-capecci", "name": "Giacomo Capecci", "category": "Handlers", "title": "Handler", "affiliation": "Al Shahania (Qatar)", "country": "Italy", "storyline": "A close second who lets his horsemanship do the talking, a quiet threat to the top spot.", "status": "Candidate", "hook": "Often misread. Never misplaced.", "bio": "Italian handler Giacomo Capecci is calm, calculated, and quietly one of the most gifted horsemen on the GCAT circuit. He has an intuitive connection with horses that few can replicate — his approach is methodical rather than forceful, built on patience and reading an animal rather than imposing on it. Despite a serious demeanor that has often been misread as cold, those who know him describe him as a man who simply lets his work do the talking. He manages relationships with multiple stud farms without burning bridges, a rare skill in a world where loyalty is a weapon and everyone is watching.", "rivals": "Glenn Schoukens", "note": "Casting not yet confirmed"}, {"id": "glenn-schoukens", "name": "Glenn Schoukens", "category": "Handlers", "title": "Handler", "affiliation": "Hleetan & Ajman & Ajmal", "country": "Belgium", "storyline": "A close second and closing fast, widely tipped as the next number one.", "status": "Confirmed", "hook": "The next #1. His brother trains. He performs.", "bio": "Belgian handler Glenn Schoukens is widely considered the most exciting talent on the GCAT circuit right now. Composed and precise in the ring, he combines an elite competitive instinct with the kind of composure that takes years to develop — though he has developed it young. He operates across multiple top-tier studs simultaneously, an approach that demands not just skill but exceptional diplomatic intelligence. Away from competition, he runs a training center in Belgium with his brother Tom, dividing the roles instinctively: Glenn owns the ring, Tom shapes the horses. His stallion Berlin's standout scores at GCAT 2025 made clear what many already suspected — Glenn is no longer just a rising name. He is the name everyone else has to answer to.", "rivals": "Giacomo Capecci", "note": ""}, {"id": "miles-buckley", "name": "Miles Buckley", "category": "Handlers", "title": "Handler", "affiliation": "Al Jumail Stud & Akmal Stud", "country": "UK", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "paolo-capecci", "name": "Paolo Capecci", "category": "Handlers", "title": "Handler", "affiliation": "Dubai Stud (UAE)", "country": "Italy", "storyline": "The man to beat: he has dominated the ring for years and every rival is coming for his crown.", "status": "Confirmed", "hook": "Being number one means everyone is gunning for you. Every single show.", "bio": "Widely regarded as the world's number one Arabian horse handler, Paolo Capecci operates at a level few can match. From his training center in Italy — 25 staff, 250 horses — he has built an empire of precision and excellence as Dubai Stud's star performer. Composed and elegantly methodical in the ring, Paolo is both the industry's gold standard and its most hunted target. With Glenn Schoukens closing fast and a new generation studying his every move, the question is no longer whether Paolo is the best — it's how long he can hold the crown.", "rivals": "Glenn Schoukens · Giacomo Capecci", "note": ""}, {"id": "philippe-hosay", "name": "Philippe Hosay", "category": "Handlers", "title": "Handler", "affiliation": "Ajmal Stud (KSA)", "country": "Belgium", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Confirmed", "hook": "Loyalty in this industry is hard to find — winning comes first.", "bio": "Belgian handler and GCAT veteran, Philippe Hosay has spent decades mastering the art of presenting purebred Arabians at the world's highest level. Now 55 and showing for Ajmal Stud in Saudi Arabia, he carries the trust of a young ambitious owner determined to bring Arabian glory back to its homeland — but his aging body and a rising generation of Arab handlers are closing in. A legend fighting to stay relevant in the sport he helped define.", "rivals": "", "note": ""}, {"id": "raphael-curti", "name": "Raphael Curti", "category": "Handlers", "title": "Handler", "affiliation": "Al Wajba (Qatar)", "country": "France", "storyline": "A former number one, out to reclaim his place at the top.", "status": "Confirmed", "hook": "He says exactly what he thinks. About everyone. Every time.", "bio": "French handler Raphaël Curti is the loudest, most combustible personality on the GCAT circuit — and he knows it, and he doesn't care. Self-made from the ground up, Raphaël built his reputation on exceptional horsemanship and an absolute refusal to keep his opinions to himself. He says exactly what he thinks, about anyone, at any time. Fiery, emotionally intense, and magnetically watchable, Raphaël treats the show ring the way he treats conversation: as a stage, and he is always the main act. He is a handler of real championship pedigree who has guided horses to prestigious titles worldwide — and if you didn't already know that, he will tell you.", "rivals": "Glenn Schoukens · Giacomo Capecci", "note": ""}, {"id": "tom-oben", "name": "Tom Oben", "category": "Handlers", "title": "Handler", "affiliation": "SK Arabian", "country": "Belgium", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "tom-schoukens", "name": "Tom Schoukens", "category": "Handlers", "title": "Handler", "affiliation": "", "country": "Belgium", "storyline": "Competes against the best handlers in the world for ring wins and a place among the elite.", "status": "Candidate", "hook": "", "bio": "Glenn Schoukens' brother. Together they run a training centre in Belgium, where Tom focuses on training the horses behind the scenes.", "rivals": "", "note": ""}, {"id": "ali-shaarawi", "name": "Ali Shaarawi", "category": "Judges", "title": "ECAHO Judge", "affiliation": "ECAHO", "country": "Egypt", "storyline": "Explains the rules of judging to viewers: how a class is scored and what the judges look for.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "elyas-ebrahim-faraj", "name": "Elyas Ebrahim Faraj", "category": "Judges", "title": "ECAHO Judge", "affiliation": "ECAHO", "country": "Bahrain", "storyline": "Explains the rules of judging to viewers: how a class is scored and what the judges look for.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "klaus-g-beste", "name": "Klaus G. Beste", "category": "Judges", "title": "ECAHO Judge", "affiliation": "ECAHO", "country": "Germany", "storyline": "Explains the rules of judging to viewers: how a class is scored and what the judges look for.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "laura-mascagna", "name": "Laura Mascagna", "category": "Judges", "title": "Judge", "affiliation": "", "country": "Italy", "storyline": "Explains the rules of judging to viewers: how a class is scored and what the judges look for.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "taha-khoudri", "name": "Taha Khoudri", "category": "Judges", "title": "ECAHO Judge", "affiliation": "ECAHO", "country": "Morocco", "storyline": "Explains the rules of judging to viewers: how a class is scored and what the judges look for.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "josy-evans", "name": "Josy Everars", "category": "Banned Judges", "title": "Banned Judge", "affiliation": "", "country": "Belgium", "storyline": "Tells their side of the story behind the ban, and what it reveals about ethics in the sport.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "gedwin", "name": "Gideon Reisel", "category": "Banned Judges", "title": "Banned Judge", "affiliation": "", "country": "Netherlands", "storyline": "Tells their side of the story behind the ban, and what it reveals about ethics in the sport.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "christianne-chazel", "name": "Christianne Chazel", "category": "Experts & Analysts", "title": "Expert", "affiliation": "", "country": "France", "storyline": "Gives context and analysis on results, bloodlines and what each win means for the season.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "mindy-peterson", "name": "Mindy Peterson", "category": "Experts & Analysts", "title": "Expert", "affiliation": "", "country": "USA", "storyline": "Gives context and analysis on results, bloodlines and what each win means for the season.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "mohamed-hammad", "name": "Mohamed Hammad", "category": "Experts & Analysts", "title": "Expert", "affiliation": "", "country": "Egypt", "storyline": "Gives context and analysis on results, bloodlines and what each win means for the season.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "abdulrahman-alashqar", "name": "Abdulrahman Alashqar", "category": "Presenters", "title": "Presenter", "affiliation": "Al Kass", "country": "Qatar", "storyline": "Tells the story as it unfolds, guiding viewers through each event.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "faisal-al-ramzani", "name": "Faisal Al-Ramzani", "category": "Presenters", "title": "Studio Analyst", "affiliation": "Al Kass", "country": "Qatar", "storyline": "Tells the story as it unfolds, guiding viewers through each event.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "francesca-aragno", "name": "Francesca Aragno", "category": "Presenters", "title": "Presenter", "affiliation": "Arabian Insider", "country": "Italy", "storyline": "Tells the story as it unfolds, guiding viewers through each event.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "luma-al-hattab", "name": "Luma Al-Hattab", "category": "Presenters", "title": "Presenter", "affiliation": "Saheel Horse", "country": "Saudi Arabia", "storyline": "Tells the story as it unfolds, guiding viewers through each event.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "manel-salmi", "name": "Manel Salmi", "category": "Presenters", "title": "Presenter", "affiliation": "Al Kass", "country": "Algeria", "storyline": "Tells the story as it unfolds, guiding viewers through each event.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "nasser-al-ghazali", "name": "Nasser Al-Ghazali", "category": "Presenters", "title": "Presenter", "affiliation": "Al Kass", "country": "Qatar", "storyline": "Tells the story as it unfolds, guiding viewers through each event.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "rhodri-williams", "name": "Rhodri Williams", "category": "Presenters", "title": "Presenter", "affiliation": "Al Kass", "country": "Wales", "storyline": "Tells the story as it unfolds, guiding viewers through each event.", "status": "Candidate", "hook": "", "bio": "", "rivals": "", "note": ""}, {"id": "abdullah-al-qassem", "name": "Abdullah Al Qassem", "category": "Supporting Characters", "title": "Azzam Alqasem's brother", "affiliation": "", "country": "Saudi Arabia", "storyline": "Family: the person closest to a main character, showing the personal cost behind the competition.", "status": "Candidate", "hook": "", "bio": "Azzam Alqasem's brother and the main trainer at the training centre they run together.", "rivals": "", "note": ""}, {"id": "constantin-uricariu", "name": "Constantin Uricariu", "category": "Supporting Characters", "title": "Giulia Bontempi's boyfriend", "affiliation": "Al Shahania Stud (Qatar)", "country": "Italy", "storyline": "Divided loyalties: personally tied to someone at a rival stud, keeping love and work apart.", "status": "Candidate", "hook": "", "bio": "Assistant trainer at Al Shahania Stud and Giulia Bontempi's boyfriend. The two keep work strictly separate and don't share work information.", "rivals": "", "note": ""}, {"id": "tbc-raphael-curti-s-assistant-1", "name": "TBC (Raphael Curti's Assistant 1)", "category": "Supporting Characters", "title": "Assistant to Raphael Curti", "affiliation": "Al Wajba (Qatar)", "country": "", "storyline": "Behind the scenes: works out of the spotlight, showing the daily effort behind every result.", "status": "Candidate", "hook": "", "bio": "Placeholder for one of Raphael Curti's assistants. Name to be confirmed.", "rivals": "", "note": ""}, {"id": "tbc-raphael-curti-s-assistant-2", "name": "TBC (Raphael Curti's Assistant 2)", "category": "Supporting Characters", "title": "Assistant to Raphael Curti", "affiliation": "Al Wajba (Qatar)", "country": "", "storyline": "Behind the scenes: works out of the spotlight, showing the daily effort behind every result.", "status": "Candidate", "hook": "", "bio": "Placeholder for one of Raphael Curti's assistants. Name to be confirmed.", "rivals": "", "note": ""}];
+var OPTIONS = {"GCAT": ["Takes viewers behind the scenes of the GCAT, explaining how the competition runs and what it takes to stage it.", "Speaks to the effort to clean up the sport: the reforms, the pushback and the challenges still ahead.", "The organisers' view of the season: the stakes, the logistics and the pressure to keep the sport credible."], "Stud Owners & Managers": ["Royal rivalry: part of the established royal rivalries, defending a legacy and a ranking built over decades.", "Royal rivalry: an established power in the sport, with everything to lose if the old order is overturned.", "Underdog: a challenger out to take over from the old order, ready to do whatever it takes to win.", "Underdog: the new money and new ambition of the sport, chasing titles the established studs have held for years.", "Heritage: competes for the love of the breed, as a guardian of the heritage and traditions of the Arabian horse.", "Heritage: puts bloodlines and tradition before trophies, a reminder of what the sport is meant to be about.", "Loyalty crisis: keeping handlers and staff loyal in a sport where the best talent is always for hire."], "Handlers": ["The man to beat: he has dominated the ring for years and every rival is coming for his crown.", "A close second and closing fast, widely tipped as the next number one.", "A close second who lets his horsemanship do the talking, a quiet threat to the top spot.", "A former number one, out to reclaim his place at the top.", "Competes against the best handlers in the world for ring wins and a place among the elite."], "Judges": ["Explains the rules of judging to viewers: how a class is scored and what the judges look for.", "Speaks to the ethics of the sport and the controversies behind contested results."], "Experts & Analysts": ["Gives context and analysis on results, bloodlines and what each win means for the season."], "Presenters": ["Tells the story as it unfolds, guiding viewers through each event.", "The audience's voice at ringside, setting up each class and capturing the reactions as results land."], "Supporting Characters": ["Family: the person closest to a main character, showing the personal cost behind the competition.", "Behind the scenes: works out of the spotlight, showing the daily effort behind every result.", "Divided loyalties: personally tied to someone at a rival stud, keeping love and work apart."], "Banned Judges": ["Tells their side of the story behind the ban, and what it reveals about ethics in the sport.", "A cautionary tale: a fall from grace that shows the sport's struggle to clean itself up."]};
 var CHECK = {"salt":"aQdi7zzVB4bVzQsRZ4B0PQ==","iv":"Ae72tz7gBgoFfwmR","ct":"3RYFxI93Zz2dYoUIFP2GOPL+ItiVwhwFIUCv"};
+var CATS = ["GCAT","Stud Owners & Managers","Handlers","Judges","Banned Judges","Experts & Analysts","Presenters","Supporting Characters"];
+Object.keys(OPTIONS).forEach(function(k){ if (CATS.indexOf(k)<0) CATS.push(k); });
 var STATUSES = ["Candidate","Approached","In talks","Confirmed","Declined"];
 var ST_COL = {"Candidate":"var(--s-cand)","Approached":"var(--s-appr)","In talks":"var(--s-talk)","Confirmed":"var(--s-conf)","Declined":"var(--s-decl)"};
-var ARCS = ["May the Best Man Win","The Royal Rivalry","Beauty of Controversy","The Arab Rising Stars","The Loyalty Crisis"];
-var ARC_COL = {"May the Best Man Win":"var(--a1)","The Royal Rivalry":"var(--a2)","Beauty of Controversy":"var(--a3)","The Arab Rising Stars":"var(--a4)","The Loyalty Crisis":"var(--a5)"};
-var COLS = [["name","Name"],["role","Role"],["affiliation","Farm / stud"],["country","Country"],["arc","Storyline"],["email","Email"],["phone","Phone"],["status","Status"],["note","Casting notes"]];
-var CW = {name:"c-name",role:"c-role",affiliation:"c-aff",country:"c-cty",arc:"c-arc",email:"c-em",phone:"c-ph",status:"c-st",note:"c-note"};
+var ST_XL = {"Candidate":"6B6B6B","Approached":"9A7A1A","In talks":"3F5E9E","Confirmed":"2E7D5B","Declined":"B23A34"};
+var LOCATIONS = [
+  {id:"paris", code:"PAR", city:"Paris", venue:"Grand Palais"},
+  {id:"abudhabi", code:"AUH", city:"Abu Dhabi", venue:"Abu Dhabi Equestrian Club"},
+  {id:"qatar", code:"DOH", city:"Qatar", venue:"Katara"},
+  {id:"london", code:"LON", city:"London", venue:"Royal Chelsea Hospital"},
+  {id:"milan", code:"MIL", city:"Milan", venue:"Under discussion"},
+  {id:"riyadh", code:"RUH", city:"Riyadh", venue:"Abdul Aziz Financial Center"},
+  {id:"wahc", code:"WAHC", city:"Qatar WAHC", venue:"Old Port"}
+];
+var LOC_BY = {}; LOCATIONS.forEach(function(l){ LOC_BY[l.id] = l; });
+var COLS = [["num","#"],["name","Name"],["affiliation","Farm / Organisation"],["country","Country"],["storyline","Storyline"],["locations","Shoot focus"],["email","Email"],["phone","Phone"],["status","Status"],["note","Casting notes"]];
+var CW = {num:"c-num",name:"c-name",category:"c-cat",affiliation:"c-aff",country:"c-cty",storyline:"c-story",locations:"c-loc",email:"c-em",phone:"c-ph",status:"c-st",note:"c-note"};
 
 var $ = function(id){ return document.getElementById(id); };
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 function slug(n){ return String(n).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "x"; }
 var toastT;
-function toast(m){ var el=$("toast"); el.textContent=m; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ el.hidden=true; }, 2800); }
+function toast(m){ var el=$("toast"); el.textContent=m; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){ el.hidden=true; }, 3200); }
 
 /* ---------- state ---------- */
-var ADDED = {};     // id -> character added by the team
-var CASTING = {};   // id -> {status, note}
-var RAW = {};       // id -> encrypted contact {iv, ct}
-var CONTACTS = {};  // id -> {email, phone} (decrypted)
-var KEY = null;
-var CAST = [];
-var F = {q:"", role:"", arc:"", status:"", group:"", sort:"", dir:1};
-var cur = -1, lastFocus = null, pendingRender = false;
+var ADDED = {}, CASTING = {}, RAW = {}, CONTACTS = {}, KEY = null, CAST = [];
+var F = {q:"", cat:"", loc:"", status:"", group:"category", sort:"", dir:1};
+var cur = -1, lastFocus = null, pendingRender = false, includeContacts = false;
 
-function prep(p){ p.arcs = (p.arc||"").split(",").map(function(s){return s.trim();}).filter(Boolean); return p; }
-SEED.forEach(function(p){ p.id = slug(p.name); p.seedStatus = p.status === "Confirmed" ? "Confirmed" : "Candidate"; prep(p); });
 function rebuild(){
-  var extra = Object.keys(ADDED).map(function(k){ var p = Object.assign({}, ADDED[k]); p.id = k; p.added = true; p.seedStatus = "Candidate"; return prep(p); })
+  var extra = Object.keys(ADDED).map(function(k){ var p = Object.assign({}, ADDED[k]); p.id = k; p.added = true; if (!p.category || CATS.indexOf(p.category)<0) p.category = p.category || "Supporting Characters"; if (CATS.indexOf(p.category)<0) CATS.push(p.category); return p; })
     .sort(function(a,b){ return (a.createdAt||0)-(b.createdAt||0); });
-  CAST = SEED.concat(extra);
-  CAST.forEach(function(p,i){ p.i = i; });
+  var all = SEED.map(function(p,i){ p.order = i; p.seedStatus = p.status || "Candidate"; return p; }).concat(extra.map(function(p,i){ p.order = 10000+i; p.seedStatus = "Candidate"; return p; }));
+  // keep schedule order: by category, then position
+  all.sort(function(a,b){ return (CATS.indexOf(a.category)-CATS.indexOf(b.category)) || (a.order-b.order); });
+  CAST = all; CAST.forEach(function(p,i){ p.i = i; });
 }
 function status(p){ var c = CASTING[p.id]; return (c && c.status) || p.seedStatus; }
 function note(p){ var c = CASTING[p.id]; return (c && c.note) || ""; }
+function story(p){ var c = CASTING[p.id]; return (c && typeof c.storyline === "string") ? c.storyline : (p.storyline || ""); }
+function locs(p){ var c = CASTING[p.id]; return (c && Array.isArray(c.locations)) ? c.locations.filter(function(x){ return LOC_BY[x]; }) : []; }
+function locNames(p){ return LOCATIONS.filter(function(l){ return locs(p).indexOf(l.id)>-1; }).map(function(l){ return l.city; }); }
 function cval(p,k){ var c = CONTACTS[p.id]; return (KEY && c && c[k]) || ""; }
-function val(p,k){ if (k==="status") return STATUSES.indexOf(status(p)); if (k==="note") return note(p); if (k==="email"||k==="phone") return cval(p,k); return p[k]||""; }
+function val(p,k){ if (k==="status") return STATUSES.indexOf(status(p)); if (k==="note") return note(p); if (k==="storyline") return story(p); if (k==="locations") return locs(p).length ? -locs(p).length : 0; if (k==="category") return CATS.indexOf(p.category); if (k==="email"||k==="phone") return cval(p,k); return p[k]||""; }
+function castingFor(p){ return Object.assign({status:status(p), note:note(p), storyline:story(p), locations:locs(p)}, CASTING[p.id]); }
 
 /* ---------- storage: shared on the published page, this browser otherwise ---------- */
 var STORE = {mode:"local", db:null};
 function localGet(c){ try { return JSON.parse(localStorage.getItem("arabians-casting-"+c) || "{}") || {}; } catch(_){ return {}; } }
 function localPut(c, map){ localStorage.setItem("arabians-casting-"+c, JSON.stringify(map)); }
-var MAPS = {characters:function(){return ADDED;}, casting:function(){return CASTING;}, contacts:function(){return RAW;}};
 var queue = {};
 function write(coll, id, data){
   var key = coll+"/"+id;
   if (queue[key]){ queue[key] = {data:data}; return Promise.resolve(); }
   queue[key] = true;
   var run = function(d){
-    var p = STORE.mode==="shared"
+    var pr = STORE.mode==="shared"
       ? (d===null ? STORE.db.collection(coll).doc(id).delete() : STORE.db.collection(coll).doc(id).set(d))
       : new Promise(function(res){ var m = localGet(coll); if (d===null) delete m[id]; else m[id] = d; localPut(coll, m); res(); });
-    return p.then(function(){
+    return pr.then(function(){
       var next = queue[key]; queue[key] = false;
       if (next && next.data !== undefined){ queue[key] = true; return run(next.data); }
     }, function(e){ queue[key] = false; throw e; });
@@ -278,27 +308,44 @@ function drawPipe(){
     }).join("");
 }
 function drawFilters(){
-  var roles = []; CAST.forEach(function(p){ if (roles.indexOf(p.role)<0) roles.push(p.role); });
-  if (F.role && roles.indexOf(F.role)<0) F.role = "";
-  $("fRole").innerHTML = '<option value="">All roles</option>' + roles.map(function(r){ return '<option'+(r===F.role?' selected':'')+'>'+esc(r)+'</option>'; }).join("");
-  $("fArc").innerHTML = '<option value="">All storylines</option>' + ARCS.map(function(a){ return '<option'+(a===F.arc?' selected':'')+'>'+esc(a)+'</option>'; }).join("");
-  ["fRole","fArc","fGroup"].forEach(function(id){ $(id).classList.toggle("on", !!$(id).value); });
+  var counts = {}; CAST.forEach(function(p){ counts[p.category] = (counts[p.category]||0)+1; });
+  if (F.cat && !counts[F.cat]) F.cat = "";
+  $("fCat").innerHTML = '<option value="">All categories</option>' + CATS.filter(function(c){ return counts[c]; }).map(function(c){ return '<option'+(c===F.cat?' selected':'')+' value="'+esc(c)+'">'+esc(c)+' ('+counts[c]+')</option>'; }).join("");
+  $("fCat").classList.toggle("on", !!F.cat);
+  var lc = {}; CAST.forEach(function(p){ locs(p).forEach(function(l){ lc[l] = (lc[l]||0)+1; }); });
+  $("fLoc").innerHTML = '<option value="">All shoot locations</option>' + LOCATIONS.map(function(l){ return '<option value="'+l.id+'"'+(l.id===F.loc?' selected':'')+'>'+esc(l.city)+' · '+esc(l.venue)+' ('+(lc[l.id]||0)+')</option>'; }).join("") + '<option value="none"'+(F.loc==="none"?' selected':'')+'>Not flagged for any location</option>';
+  $("fLoc").classList.toggle("on", !!F.loc);
 }
 function shown(){
   var q = F.q.trim().toLowerCase();
   var s = CAST.filter(function(p){
-    if (F.role && p.role!==F.role) return false;
-    if (F.arc && p.arcs.indexOf(F.arc)<0) return false;
+    if (F.cat && p.category!==F.cat) return false;
+    if (F.loc==="none" && locs(p).length) return false;
+    if (F.loc && F.loc!=="none" && locs(p).indexOf(F.loc)<0) return false;
     if (F.status && status(p)!==F.status) return false;
-    if (q && [p.name,p.role,p.title,p.affiliation,p.country,p.hook,p.bio,p.rivals,p.arc,note(p),status(p),cval(p,"email"),cval(p,"phone")].join(" ").toLowerCase().indexOf(q)<0) return false;
+    if (q && [p.name,p.category,p.title,p.affiliation,p.country,p.hook,p.bio,p.rivals,story(p),locNames(p).join(" "),note(p),status(p),cval(p,"email"),cval(p,"phone")].join(" ").toLowerCase().indexOf(q)<0) return false;
     return true;
   });
-  if (F.sort) s.sort(function(a,b){ var x = val(a,F.sort), y = val(b,F.sort); return (typeof x==="number" ? x-y : String(x).localeCompare(String(y)))*F.dir; });
+  if (F.sort) s.sort(function(a,b){ var x = val(a,F.sort), y = val(b,F.sort); return (typeof x==="number" ? x-y : String(x).localeCompare(String(y)))*F.dir || (a.i-b.i); });
   return s;
 }
 
 /* ---------- table ---------- */
-function arcTags(p){ return p.arcs.map(function(a){ return '<span class="arc" style="--c:'+(ARC_COL[a]||"var(--gold)")+'">'+esc(a)+'</span>'; }).join("") || '<span class="none">—</span>'; }
+function storyHTML(t){
+  if (!t) return '<span class="none">—</span>';
+  var m = t.match(/^([^:]{2,24}):\s*(.*)$/);
+  return '<div class="story">'+(m ? '<b>'+esc(m[1])+':</b> '+esc(m[2]) : esc(t))+'</div>';
+}
+function locChips(p){
+  var on = locs(p);
+  return '<div class="locs">'+LOCATIONS.map(function(l){ var a = on.indexOf(l.id)>-1; return '<button type="button" class="loc" data-loc="'+l.id+'" data-loc-for="'+p.i+'" aria-pressed="'+a+'" title="'+esc(l.city+' · '+l.venue)+'" aria-label="'+(a?'Remove ':'Flag ')+esc(p.name)+(a?' from ':' for ')+esc(l.city)+'">'+l.code+'</button>'; }).join("")+'</div>';
+}
+function toggleLoc(p, id){
+  var cur = locs(p).slice(), k = cur.indexOf(id);
+  if (k>-1) cur.splice(k,1); else cur.push(id);
+  cur = LOCATIONS.map(function(l){ return l.id; }).filter(function(x){ return cur.indexOf(x)>-1; });
+  saveCasting(p, {locations:cur}, (k>-1 ? p.name+" removed from " : p.name+" flagged for ")+LOC_BY[id].city);
+}
 function stSelect(p, id){
   var s = status(p);
   return '<select class="stsel" '+(id?'id="'+id+'" ':'')+'data-st-for="'+p.i+'" style="--c:'+ST_COL[s]+'" aria-label="Casting status for '+esc(p.name)+'">'+STATUSES.map(function(x){ return '<option'+(x===s?' selected':'')+'>'+x+'</option>'; }).join("")+'</select>';
@@ -307,35 +354,38 @@ function contactCell(p,f){
   if (!KEY) return '<td><span class="locked">••••••</span></td>';
   return '<td><input class="cin" data-ci="'+p.i+'" data-f="'+f+'" type="'+(f==="email"?"email":"tel")+'" value="'+esc(cval(p,f))+'" placeholder="'+(f==="email"?"Add email":"Add phone")+'" aria-label="'+(f==="email"?"Email for ":"Phone for ")+esc(p.name)+'" autocomplete="off"></td>';
 }
-function row(p){
+function row(p, rowNo){
   var s = status(p), n = note(p);
   return '<tr class="r'+(s==="Declined"?' declined':'')+'" tabindex="0" data-i="'+p.i+'" aria-label="Open profile for '+esc(p.name)+'">' +
-    '<td class="n"><div class="nm">'+esc(p.name)+(p.added?'<span class="added-tag">Added</span>':'')+'</div>'+(p.title?'<div class="tt">'+esc(p.title)+'</div>':'')+'</td>' +
-    '<td><span class="role-cell">'+esc(p.role)+'</span></td>' +
+    '<td class="num">'+String(rowNo).padStart(2,"0")+'</td>' +
+    '<td class="n"><div class="nm">'+esc(p.name)+(p.added?'<span class="added-tag">Added</span>':'')+'</div>'+(p.title?'<div class="tt">'+esc(p.title)+'</div>':'')+(F.group!=="category"?'<div class="tt cat-cell">'+esc(p.category)+'</div>':'')+'</td>' +
     '<td>'+(p.affiliation?esc(p.affiliation):'<span class="none">—</span>')+'</td>' +
     '<td class="dim">'+(p.country?esc(p.country):'<span class="none">—</span>')+'</td>' +
-    '<td class="wide"><div class="arcs">'+arcTags(p)+'</div></td>' +
+    '<td class="wide">'+storyHTML(story(p))+'</td>' +
+    '<td class="wide">'+locChips(p)+'</td>' +
     contactCell(p,"email") + contactCell(p,"phone") +
     '<td class="st">'+stSelect(p)+'</td>' +
     '<td class="wide">'+(n?'<div class="note-cell">'+esc(n)+'</div>':'<span class="none">—</span>')+'</td></tr>';
 }
 function render(){
   drawPipe(); drawFilters();
-  var s = shown(), any = F.q||F.role||F.arc||F.status;
+  var s = shown(), any = F.q||F.cat||F.loc||F.status;
   $("count").innerHTML = s.length+' of '+CAST.length+' shown' + (any?' · <button class="clear" id="clr">Clear filters</button>':'');
-  var head = '<thead><tr>'+COLS.map(function(c){ var on = F.sort===c[0]; return '<th scope="col"><button data-sort="'+c[0]+'"'+(on?' data-on':'')+'>'+c[1]+'<span class="ar">'+(on&&F.dir<0?'▼':'▲')+'</span></button></th>'; }).join("")+'</tr></thead>';
-  var body = "";
+  var head = '<thead><tr>'+COLS.map(function(c){ if (c[0]==="num") return '<th scope="col" class="num-h">#</th>'; var on = F.sort===c[0]; return '<th scope="col"><button data-sort="'+c[0]+'"'+(on?' data-on':'')+'>'+c[1]+'<span class="ar">'+(on&&F.dir<0?'▼':'▲')+'</span></button></th>'; }).join("")+'</tr></thead>';
+  var body = "", num = 0, numbered = function(p){ return row(p, ++num); };
   if (!s.length) body = '<tr class="empty-row"><td colspan="'+COLS.length+'">No characters match these filters.</td></tr>';
-  else if (!F.group) body = s.map(row).join("");
+  else if (!F.group) body = s.map(numbered).join("");
   else {
     var keys = [], by = {};
     s.forEach(function(p){
-      var ks = F.group==="arc" ? (p.arcs.length?p.arcs:["No storyline"]) : F.group==="status" ? [status(p)] : [p[F.group]||"—"];
-      ks.forEach(function(k){ if (F.arc && F.group==="arc" && k!==F.arc) return; if (!by[k]){by[k]=[];keys.push(k);} by[k].push(p); });
+      var ks = F.group==="location" ? (locs(p).length ? locs(p).map(function(x){ return LOC_BY[x].city+" · "+LOC_BY[x].venue; }) : ["Not flagged for any location"]) : [F.group==="status" ? status(p) : F.group==="category" ? p.category : (p.country||"—")];
+      ks.forEach(function(k){ if (F.loc && F.loc!=="none" && F.group==="location" && k.indexOf(LOC_BY[F.loc].city+" · ")!==0) return; if (!by[k]){ by[k]=[]; keys.push(k); } by[k].push(p); });
     });
-    if (F.group==="arc") keys.sort(function(a,b){ return ARCS.indexOf(a)-ARCS.indexOf(b); });
+    if (F.group==="location"){ var LK = LOCATIONS.map(function(l){ return l.city+" · "+l.venue; }).concat(["Not flagged for any location"]); keys.sort(function(a,b){ return LK.indexOf(a)-LK.indexOf(b); }); }
+    if (F.group==="category") keys.sort(function(a,b){ return CATS.indexOf(a)-CATS.indexOf(b); });
     if (F.group==="status") keys.sort(function(a,b){ return STATUSES.indexOf(a)-STATUSES.indexOf(b); });
-    body = keys.map(function(k){ return '<tr class="gh"><td colspan="'+COLS.length+'"><h2>'+esc(k)+'</h2><span class="label">'+by[k].length+'</span></td></tr>'+by[k].map(row).join(""); }).join("");
+    if (F.group==="country") keys.sort();
+    body = keys.map(function(k){ return '<tr class="gh"><td colspan="'+COLS.length+'"><h2>'+esc(k)+'</h2><span class="label">'+by[k].length+'</span></td></tr>'+by[k].map(numbered).join(""); }).join("");
   }
   $("grid").innerHTML = '<table><colgroup>'+COLS.map(function(c){ return '<col class="'+CW[c[0]]+'">'; }).join("")+'</colgroup>'+head+'<tbody>'+body+'</tbody></table>';
   $("grid").querySelectorAll("tr.r").forEach(function(tr){ Array.prototype.forEach.call(tr.children, function(td,k){ if (COLS[k]) td.setAttribute("data-label", COLS[k][1]); }); });
@@ -361,31 +411,37 @@ function contactFact(v){
   if (!v) return '<div class="note">Not added yet</div>';
   return '<div class="cv"><span>'+esc(v)+'</span><button class="cp" data-copy="'+esc(v)+'">Copy</button></div>';
 }
+function storyOptions(cat, current){
+  var list = (OPTIONS[cat]||[]).slice();
+  var h = '<option value="">No storyline</option>' + list.map(function(o){ return '<option'+(o===current?' selected':'')+'>'+esc(o)+'</option>'; }).join("");
+  if (current && list.indexOf(current)<0) h += '<option selected>'+esc(current)+'</option>';
+  return h;
+}
 function showDrawer(){ $("drawer").hidden = false; $("scrim").hidden = false; }
 function openProfile(i, keepScroll){
   var list = shown(), p = CAST[i]; cur = i;
   var pos = list.indexOf(p), back = CAST.filter(function(o){ return o!==p && (o.rivals||"").toLowerCase().indexOf(p.name.toLowerCase())>-1; });
   var st = $("drawer").scrollTop;
   $("drawer").innerHTML =
-    '<div class="d-top"><div class="kicker">'+esc(p.role)+(p.title?' · '+esc(p.title):'')+'</div><button class="x" id="dClose" aria-label="Close">×</button></div>' +
+    '<div class="d-top"><div class="kicker">'+esc(p.category)+(p.title?' · '+esc(p.title):'')+'</div><button class="x" id="dClose" aria-label="Close">×</button></div>' +
     '<h2 class="d-name" id="dName">'+esc(p.name)+'</h2>' +
     (p.hook?'<p class="d-hook">“'+esc(p.hook)+'”</p>':'') +
     '<section class="casting" aria-label="Casting">' +
       '<div class="row" style="justify-content:space-between"><span class="kicker">Casting</span><div style="width:150px">'+stSelect(p,"dStatus")+'</div></div>' +
-      '<label style="display:flex;flex-direction:column;gap:6px"><span class="label">Casting notes</span><textarea class="inp" id="dNote" rows="4" placeholder="Availability, fees, conditions, next step…">'+esc(note(p))+'</textarea></label>' +
+      '<label class="fld"><span class="label">Storyline</span><select class="inp" id="dStory">'+storyOptions(p.category, story(p))+'</select></label>' +
+      '<div class="fld"><span class="label">Shoot focus</span><div class="loc-list">'+LOCATIONS.map(function(l){ return '<label class="loc-opt"><input type="checkbox" data-dloc="'+l.id+'"'+(locs(p).indexOf(l.id)>-1?' checked':'')+'><span>'+esc(l.city)+'</span><span class="venue">'+esc(l.venue)+'</span></label>'; }).join("")+'</div></div>' +
+      '<label class="fld"><span class="label">Casting notes</span><textarea class="inp" id="dNote" rows="4" placeholder="Availability, fees, conditions, next step…">'+esc(note(p))+'</textarea></label>' +
       '<div class="actions"><span class="msg" style="margin-right:auto;align-self:center">'+where()+'</span><button class="btn solid" id="dSaveNote" type="button">Save notes</button></div>' +
     '</section>' +
     '<div class="facts">' +
-      '<div><div class="label">Farm / stud</div><div>'+(esc(p.affiliation)||'—')+'</div></div>' +
+      '<div><div class="label">Farm / organisation</div><div>'+(esc(p.affiliation)||'—')+'</div></div>' +
       '<div><div class="label">Country</div><div>'+(esc(p.country)||'—')+'</div></div>' +
       '<div><div class="label">Email</div>'+contactFact(cval(p,"email"))+'</div>' +
       '<div><div class="label">Phone</div>'+contactFact(cval(p,"phone"))+'</div>' +
-      '<div style="grid-column:1/-1"><div class="label">Storyline</div><div class="arcs" style="margin-top:6px">'+arcTags(p)+'</div></div>' +
     '</div>' +
     '<div><div class="label">Profile</div>'+(p.bio?'<p class="bio">'+esc(p.bio)+'</p>':'<p class="note" style="margin-top:8px">No profile written yet.</p>')+'</div>' +
     '<div><div class="label">Rivals</div><div class="rivals">'+rivalHTML(p.rivals)+'</div></div>' +
     (back.length?'<div><div class="label">Named as a rival by</div><div class="rivals">'+back.map(function(o){ return '<button class="rv" data-i="'+o.i+'">'+esc(o.name)+' →</button>'; }).join("")+'</div></div>':'') +
-    (p.note?'<p class="note">'+esc(p.note)+'</p>':'') +
     (p.added?'<div id="rmWrap"><button class="btn danger" id="rmBtn" type="button">Remove this character</button></div>':'') +
     '<div class="nav"><button id="dPrev"'+(pos>0?'':' hidden')+'>← '+(pos>0?esc(list[pos-1].name):'')+'</button><span></span><button id="dNext"'+(pos>-1&&pos<list.length-1?'':' hidden')+'>'+(pos>-1&&pos<list.length-1?esc(list[pos+1].name):'')+' →</button></div>';
   showDrawer();
@@ -393,23 +449,25 @@ function openProfile(i, keepScroll){
 }
 function openAdd(){
   cur = -1;
+  var cat0 = F.cat || "Stud Owners & Managers";
   $("drawer").innerHTML =
     '<div class="d-top"><div class="kicker">New character</div><button class="x" id="dClose" aria-label="Close">×</button></div>' +
     '<h2 class="d-name" id="dName">Add a character</h2>' +
     '<form class="form" id="addForm" novalidate>' +
-    '<label class="full"><span class="label">Name <span class="req">*</span></span><input class="inp" id="nName" autocomplete="off"></label>' +
-    '<label><span class="label">Role <span class="req">*</span></span><input class="inp" id="nRole" list="roleList" autocomplete="off" placeholder="e.g. Handler"><datalist id="roleList">'+Array.from(new Set(CAST.map(function(p){return p.role;}))).map(function(r){ return '<option value="'+esc(r)+'">'; }).join("")+'</datalist></label>' +
-    '<label><span class="label">Title</span><input class="inp" id="nTitle" autocomplete="off" placeholder="e.g. Manager"></label>' +
-    '<label><span class="label">Farm / stud / organisation</span><input class="inp" id="nAff" autocomplete="off"></label>' +
+    '<label class="full"><span class="label">Full name <span class="req">*</span></span><input class="inp" id="nName" autocomplete="off"></label>' +
+    '<label><span class="label">Category <span class="req">*</span></span><select class="inp" id="nCat">'+CATS.map(function(c){ return '<option'+(c===cat0?' selected':'')+'>'+esc(c)+'</option>'; }).join("")+'</select></label>' +
+    '<label><span class="label">Title</span><input class="inp" id="nTitle" autocomplete="off" placeholder="e.g. Owner, Handler"></label>' +
+    '<label><span class="label">Farm / organisation</span><input class="inp" id="nAff" autocomplete="off"></label>' +
     '<label><span class="label">Country</span><input class="inp" id="nCountry" autocomplete="off"></label>' +
     '<label><span class="label">Email</span><input class="inp" id="nEmail" type="email" autocomplete="off" placeholder="name@example.com"></label>' +
     '<label><span class="label">Phone</span><input class="inp" id="nPhone" type="tel" autocomplete="off" placeholder="+974 …"></label>' +
     (KEY ? '' : '<label class="full"><span class="label">Team password (needed to save email and phone)</span><input class="inp" id="nPw" type="password" autocomplete="off"></label>') +
-    '<label><span class="label">Storyline</span><select class="inp" id="nArc"><option value="">No storyline</option>'+ARCS.map(function(a){ return '<option>'+esc(a)+'</option>'; }).join("")+'</select></label>' +
+    '<label class="full"><span class="label">Storyline</span><select class="inp" id="nStory">'+storyOptions(cat0, (OPTIONS[cat0]||[])[0]||"")+'</select></label>' +
     '<label><span class="label">Casting status</span><select class="inp" id="nStatus">'+STATUSES.map(function(s){ return '<option>'+s+'</option>'; }).join("")+'</select></label>' +
-    '<label class="full"><span class="label">Hook (one line)</span><input class="inp" id="nHook" autocomplete="off"></label>' +
-    '<label class="full"><span class="label">Profile</span><textarea class="inp" id="nBio" rows="4" placeholder="Who they are and why they matter to the story"></textarea></label>' +
+    '<label><span class="label">Hook (one line)</span><input class="inp" id="nHook" autocomplete="off"></label>' +
+    '<label class="full"><span class="label">Profile</span><textarea class="inp" id="nBio" rows="3" placeholder="Who they are and why they matter to the story"></textarea></label>' +
     '<label class="full"><span class="label">Rivals</span><input class="inp" id="nRivals" autocomplete="off" placeholder="Separate names with ·"></label>' +
+    '<div class="full fld"><span class="label">Shoot focus</span><div class="loc-list">'+LOCATIONS.map(function(l){ return '<label class="loc-opt"><input type="checkbox" data-nloc="'+l.id+'"'+(F.loc===l.id?' checked':'')+'><span>'+esc(l.city)+'</span><span class="venue">'+esc(l.venue)+'</span></label>'; }).join("")+'</div></div>' +
     '<label class="full"><span class="label">Casting notes</span><textarea class="inp" id="nNote" rows="3" placeholder="Availability, fees, conditions, next step…"></textarea></label>' +
     '<p class="note full" id="addMsg">'+where()+'</p>' +
     '<div class="actions full"><button class="btn" type="button" id="addCancel">Cancel</button><button class="btn solid" type="submit">Add character</button></div>' +
@@ -420,7 +478,7 @@ function submitAdd(){
   var v = function(id){ return $(id).value.trim(); };
   var m = $("addMsg");
   function fail(msg, el){ m.textContent = msg; m.style.color = "var(--s-decl)"; if (el) el.focus(); }
-  if (!v("nName") || !v("nRole")) return fail("Add a name and a role to save this character.", v("nName")?$("nRole"):$("nName"));
+  if (!v("nName")) return fail("Add a name to save this character.", $("nName"));
   var em = v("nEmail"), ph = v("nPhone");
   var keyReady = Promise.resolve(KEY);
   if ((em || ph) && !KEY){
@@ -431,13 +489,13 @@ function submitAdd(){
   }
   keyReady.then(function(){
     var id = slug(v("nName")); if (CAST.some(function(p){ return p.id===id; })) id += "-" + Date.now().toString(36);
-    var p = {name:v("nName"), role:v("nRole"), title:v("nTitle"), affiliation:v("nAff"), country:v("nCountry"), arc:v("nArc"), hook:v("nHook"), bio:v("nBio"), rivals:v("nRivals"), note:"", status:"Candidate", createdAt:Date.now()};
-    var c = {status:v("nStatus"), note:v("nNote")};
+    var p = {name:v("nName"), category:v("nCat"), title:v("nTitle"), affiliation:v("nAff"), country:v("nCountry"), hook:v("nHook"), bio:v("nBio"), rivals:v("nRivals"), note:"", createdAt:Date.now()};
+    var c = {status:v("nStatus"), note:v("nNote"), storyline:$("nStory").value, locations:Array.prototype.map.call(document.querySelectorAll("[data-nloc]:checked"), function(x){ return x.dataset.nloc; })};
     ADDED[id] = p; CASTING[id] = c;
     if (em || ph) CONTACTS[id] = {email:em, phone:ph};
     rebuild();
     if (document.activeElement) document.activeElement.blur();
-    render(); openProfile(CAST.length-1);
+    render(); openProfile(CAST.filter(function(x){ return x.id===id; })[0].i);
     write("characters", id, p).then(function(){ return write("casting", id, c); }).then(function(){
       if (!(em || ph)) return;
       return enc(KEY, JSON.stringify(CONTACTS[id])).then(function(o){ RAW[id] = o; return write("contacts", id, o); });
@@ -446,21 +504,172 @@ function submitAdd(){
 }
 function close(){ $("drawer").hidden = true; $("scrim").hidden = true; cur = -1; if (pendingRender) refresh(); if (lastFocus && document.contains(lastFocus)) lastFocus.focus(); }
 function step(d){ var l = shown(), k = l.indexOf(CAST[cur]); if (k>-1 && l[k+d]) openProfile(l[k+d].i); }
-function setStatus(p, s){
-  var c = Object.assign({status:status(p), note:note(p)}, CASTING[p.id]); c.status = s; CASTING[p.id] = c;
-  write("casting", p.id, c).then(function(){ toast(p.name+": "+s); }, saveErr);
+function saveCasting(p, patch, msg){
+  var c = castingFor(p); Object.assign(c, patch); CASTING[p.id] = c;
+  write("casting", p.id, c).then(function(){ toast(msg); }, saveErr);
   refresh();
+}
+
+/* ---------- Excel download ---------- */
+var exceljsP = null;
+function loadExcelJS(){
+  if (window.ExcelJS) return Promise.resolve(window.ExcelJS);
+  if (exceljsP) return exceljsP;
+  exceljsP = new Promise(function(res, rej){
+    var s = document.createElement("script");
+    s.src = "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js";
+    s.onload = function(){ window.ExcelJS ? res(window.ExcelJS) : rej(new Error("load")); };
+    s.onerror = function(){ exceljsP = null; rej(new Error("load")); };
+    document.head.appendChild(s);
+  });
+  return exceljsP;
+}
+function colLetter(n){ var s=""; while(n>0){ var m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); } return s; }
+function buildWorkbook(ExcelJS, withContacts){
+  var wb = new ExcelJS.Workbook();
+  wb.creator = "Characters Casting"; wb.calcProperties.fullCalcOnLoad = true;
+  var A = "Arial", INK = "FF141413";
+  var thin = {style:"thin", color:{argb:"FFD9D4C7"}};
+  var head = function(c){ c.font = {name:A, size:10, bold:true, color:{argb:"FFFFFFFF"}}; c.fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FF1F2430"}}; c.border = {bottom:{style:"medium", color:{argb:"FFC9A84C"}}}; c.alignment = {vertical:"middle", wrapText:true}; };
+  var ws = wb.addWorksheet("Characters", {views:[{state:"frozen", xSplit:2, ySplit:5}]});
+  var today = new Date().toLocaleDateString("en-GB", {day:"numeric", month:"long", year:"numeric"});
+  ws.getCell("A1").value = "The Arabians · Season One"; ws.getCell("A1").font = {name:A, size:10, bold:true, color:{argb:"FF8A7330"}};
+  ws.getCell("A2").value = "Schedule of Characters"; ws.getCell("A2").font = {name:A, size:16, bold:true, color:{argb:INK}};
+  ws.getCell("A3").value = "List as of "+today+". Source: Characters Casting board."; ws.getCell("A3").font = {name:A, size:9, italic:true, color:{argb:"FF6B6B6B"}};
+  var H = ["No.","Full Name","Category","Title","Farm / Organisation","Country"].concat(withContacts?["Email","Phone"]:[]).concat(["Storyline","Shoot Focus","Casting Status"]);
+  var W = [6,44,24,26,30,16].concat(withContacts?[30,18]:[]).concat([52,26,15]);
+  var HR = 5, stCol = H.indexOf("Storyline")+1, statCol = H.indexOf("Casting Status")+1, catCol = 3;
+  H.forEach(function(h,i){ var c = ws.getCell(HR, i+1); c.value = h; head(c); if (i===0) c.alignment = {horizontal:"center", vertical:"middle"}; });
+  ws.getRow(HR).height = 24;
+  W.forEach(function(w,i){ ws.getColumn(i+1).width = w; });
+  // options sheet first so validations can reference it
+  var so = wb.addWorksheet("Storyline Options");
+  var optCats = CATS.filter(function(c){ return (OPTIONS[c]||[]).length; });
+  var optRange = {};
+  so.getCell("A1").value = "Storyline Options"; so.getCell("A1").font = {name:A, size:14, bold:true, color:{argb:INK}};
+  so.getCell("A2").value = "Each Storyline cell on the Characters sheet has a dropdown with the options for that character's category. Edit the wording here and pick again, or type your own text in the cell.";
+  so.getCell("A2").font = {name:A, size:9, italic:true, color:{argb:"FF6B6B6B"}};
+  optCats.forEach(function(cat, j){
+    var L = colLetter(j+1), list = OPTIONS[cat];
+    var h = so.getCell(L+"4"); h.value = cat; head(h);
+    list.forEach(function(t,k){ var c = so.getCell(L+(5+k)); c.value = t; c.font = {name:A, size:10, color:{argb:INK}}; c.alignment = {wrapText:true, vertical:"top"}; c.border = {bottom:thin}; });
+    so.getColumn(j+1).width = 42;
+    optRange[cat] = "'Storyline Options'!$"+L+"$5:$"+L+"$"+(4+list.length);
+  });
+  // rows: full schedule in category order
+  var rows = CAST.slice().sort(function(a,b){ return a.i-b.i; });
+  var prev = null;
+  rows.forEach(function(p, k){
+    var r = HR+1+k;
+    var vals = [k+1, p.name, p.category, p.title||"—", p.affiliation||"—", p.country||"—"].concat(withContacts?[cval(p,"email")||"—", cval(p,"phone")||"—"]:[]).concat([story(p)||"—", locNames(p).join(", ")||"—", status(p)]);
+    vals.forEach(function(v,i){
+      var c = ws.getCell(r, i+1); c.value = v;
+      c.font = {name:A, size:10, bold:(i===1), color:{argb:INK}};
+      c.alignment = {vertical:"top", horizontal:(i===0?"center":"left"), wrapText:true};
+      var b = {bottom:thin}; if (prev && p.category!==prev) b.top = {style:"thin", color:{argb:"FF8A7330"}}; c.border = b;
+      if ((k+1)%2===0) c.fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FFF7F5EF"}};
+    });
+    ws.getCell(r, statCol).font = {name:A, size:10, bold:true, color:{argb:"FF"+(ST_XL[status(p)]||"6B6B6B")}};
+    if (optRange[p.category]) ws.getCell(r, stCol).dataValidation = {type:"list", allowBlank:true, showErrorMessage:false, showInputMessage:true, promptTitle:"Storyline", prompt:"Pick an option or type your own.", formulae:[optRange[p.category]]};
+    ws.getRow(r).height = 30;
+    prev = p.category;
+  });
+  var last = HR + rows.length;
+  ws.autoFilter = {from:{row:HR, column:1}, to:{row:last, column:H.length}};
+  ws.pageSetup = {orientation:"landscape", fitToPage:true, fitToWidth:1, fitToHeight:0, printTitlesRow:HR+":"+HR, margins:{left:0.4, right:0.4, top:0.5, bottom:0.5, header:0.3, footer:0.3}};
+  ws.headerFooter = {oddFooter:"&CPage &P of &N"};
+  // summary
+  var sm = wb.addWorksheet("Summary");
+  sm.getCell("A1").value = "Schedule of Characters: Summary"; sm.getCell("A1").font = {name:A, size:14, bold:true, color:{argb:INK}};
+  var SH = ["Category","Characters"].concat(STATUSES);
+  SH.forEach(function(h,i){ var c = sm.getCell(3, i+1); c.value = h; head(c); });
+  var catL = colLetter(catCol), statL = colLetter(statCol);
+  var rng = function(L){ return "Characters!$"+L+"$"+(HR+1)+":$"+L+"$"+last; };
+  var used = CATS.filter(function(c){ return rows.some(function(p){ return p.category===c; }); });
+  used.forEach(function(cat, j){
+    var r = 4+j;
+    sm.getCell(r,1).value = cat;
+    sm.getCell(r,2).value = {formula:"COUNTIF("+rng(catL)+",A"+r+")"};
+    STATUSES.forEach(function(s,k){ sm.getCell(r,3+k).value = {formula:"COUNTIFS("+rng(catL)+",A"+r+","+rng(statL)+",\""+s+"\")"}; });
+  });
+  var tr = 4+used.length;
+  sm.getCell(tr,1).value = "Total";
+  for (var c = 2; c <= SH.length; c++){ var L = colLetter(c); sm.getCell(tr,c).value = {formula:"SUM("+L+"4:"+L+(tr-1)+")"}; }
+  for (var r = 4; r <= tr; r++) for (var c2 = 1; c2 <= SH.length; c2++){
+    var cell = sm.getCell(r,c2); cell.font = {name:A, size:10, bold:(r===tr), color:{argb:INK}};
+    cell.border = r===tr ? {top:{style:"thin", color:{argb:INK}}, bottom:thin} : {bottom:thin};
+    if (c2>1) cell.alignment = {horizontal:"center"};
+  }
+  sm.getCell(tr+2,1).value = "Counts update automatically from the Characters sheet."; sm.getCell(tr+2,1).font = {name:A, size:9, italic:true, color:{argb:"FF6B6B6B"}};
+  var lr = tr+4, locL = colLetter(H.indexOf("Shoot Focus")+1);
+  ["Shoot Location","Venue","Characters"].forEach(function(h,i){ var c = sm.getCell(lr, i+1); c.value = h; head(c); });
+  LOCATIONS.forEach(function(l, j){
+    var r = lr+1+j;
+    sm.getCell(r,1).value = l.city; sm.getCell(r,2).value = l.venue;
+    sm.getCell(r,3).value = {formula:'SUMPRODUCT(--ISNUMBER(SEARCH(", "&A'+r+'&",", ", "&'+rng(locL)+'&",")))'};
+    for (var c4 = 1; c4 <= 3; c4++){ var cl = sm.getCell(r,c4); cl.font = {name:A, size:10, color:{argb:INK}}; cl.border = {bottom:thin}; if (c4===3) cl.alignment = {horizontal:"center"}; }
+  });
+  sm.getColumn(1).width = 28; for (var c3 = 2; c3 <= SH.length; c3++) sm.getColumn(c3).width = 13;
+  // shoot locations sheet: who is flagged for each location
+  var sl = wb.addWorksheet("Shoot Locations");
+  sl.getCell("A1").value = "Shoot Locations: Character Focus"; sl.getCell("A1").font = {name:A, size:14, bold:true, color:{argb:INK}};
+  sl.getCell("A2").value = "Characters flagged as a focus for each shoot location on the Characters Casting board."; sl.getCell("A2").font = {name:A, size:9, italic:true, color:{argb:"FF6B6B6B"}};
+  var r0 = 4;
+  LOCATIONS.forEach(function(l){
+    var list = rows.filter(function(p){ return locs(p).indexOf(l.id)>-1; });
+    var t = sl.getCell(r0,1); t.value = l.city+" · "+l.venue+"  ("+list.length+")"; t.font = {name:A, size:12, bold:true, color:{argb:"FF8A7330"}};
+    r0++;
+    ["No.","Full Name","Category","Title","Farm / Organisation","Casting Status"].forEach(function(h,i){ var c = sl.getCell(r0, i+1); c.value = h; head(c); });
+    r0++;
+    if (!list.length){ var e = sl.getCell(r0,2); e.value = "No characters flagged yet."; e.font = {name:A, size:10, italic:true, color:{argb:"FF6B6B6B"}}; r0++; }
+    list.forEach(function(p,k){
+      [k+1, p.name, p.category, p.title||"—", p.affiliation||"—", status(p)].forEach(function(v,i){
+        var c = sl.getCell(r0, i+1); c.value = v; c.font = {name:A, size:10, bold:(i===1), color:{argb:(i===5?"FF"+(ST_XL[status(p)]||"6B6B6B"):INK)}}; c.border = {bottom:thin}; c.alignment = {vertical:"top", wrapText:true, horizontal:(i===0?"center":"left")};
+        if ((k+1)%2===0) c.fill = {type:"pattern", pattern:"solid", fgColor:{argb:"FFF7F5EF"}};
+      });
+      r0++;
+    });
+    r0 += 2;
+  });
+  [6,44,24,26,30,15].forEach(function(w,i){ sl.getColumn(i+1).width = w; });
+  sl.pageSetup = {orientation:"landscape", fitToPage:true, fitToWidth:1, fitToHeight:0};
+  return wb;
+}
+var dlNS;
+async function downloadExcel(){
+  var btn = $("xlsxBtn"); btn.disabled = true; var label = btn.innerHTML; btn.lastChild.textContent = "Preparing…";
+  try {
+    var ExcelJS = await loadExcelJS();
+    var withC = !!(KEY && includeContacts);
+    var buf = await buildWorkbook(ExcelJS, withC).xlsx.writeBuffer();
+    var name = "The-Arabians-Schedule-of-Characters-"+new Date().toISOString().slice(0,10)+".xlsx";
+    var blob = new Blob([buf], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+    if (window.claude && window.claude.use){
+      if (dlNS === undefined) dlNS = await window.claude.use("downloads");
+      if (!dlNS){ toast("Downloads aren't available in this view."); return; }
+      try { await dlNS.save({filename:name, data:blob}); toast("Excel sheet saved."); }
+      catch(e){ if (e && e.code==="declined") return; toast(e && e.code==="rate_limited" ? "A save is already waiting for your answer." : "Couldn't save the Excel sheet here."); }
+    } else {
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      toast("Excel sheet downloaded.");
+    }
+  } catch(e){ toast("Couldn't build the Excel sheet. Check your connection and try again."); }
+  finally { btn.disabled = false; btn.innerHTML = label; }
 }
 
 /* ---------- events ---------- */
 $("pipe").addEventListener("click", function(e){ var b = e.target.closest("[data-st]"); if (b){ F.status = b.dataset.st; render(); } });
 $("q").addEventListener("input", function(){ F.q = this.value; render(); });
-$("fRole").addEventListener("change", function(){ F.role = this.value; render(); });
-$("fArc").addEventListener("change", function(){ F.arc = this.value; render(); });
+$("fCat").addEventListener("change", function(){ F.cat = this.value; render(); });
+$("fLoc").addEventListener("change", function(){ F.loc = this.value; render(); });
 $("fGroup").addEventListener("change", function(){ F.group = this.value; render(); });
-$("count").addEventListener("click", function(e){ if (e.target.id==="clr"){ F.q=F.role=F.arc=F.status=""; $("q").value=""; render(); } });
+$("count").addEventListener("click", function(e){ if (e.target.id==="clr"){ F.q=F.cat=F.loc=F.status=""; $("q").value=""; render(); } });
 $("addBtn").addEventListener("click", function(e){ lastFocus = e.currentTarget; openAdd(); });
+$("xlsxBtn").addEventListener("click", downloadExcel);
 $("grid").addEventListener("click", function(e){
+  var lb = e.target.closest("[data-loc-for]");
+  if (lb){ toggleLoc(CAST[+lb.dataset.locFor], lb.dataset.loc); return; }
   if (e.target.closest(".cin,.stsel")) return;
   var sb = e.target.closest("[data-sort]");
   if (sb){ var k = sb.dataset.sort; if (F.sort===k) F.dir = -F.dir; else { F.sort = k; F.dir = 1; } render(); return; }
@@ -470,17 +679,21 @@ $("grid").addEventListener("keydown", function(e){
   if (e.target.matches(".cin")){ if (e.key==="Enter") e.target.blur(); return; }
   if ((e.key==="Enter"||e.key===" ") && e.target.matches("tr.r")){ e.preventDefault(); lastFocus = e.target; openProfile(+e.target.dataset.i); }
 });
-document.addEventListener("change", function(e){ var s = e.target.closest && e.target.closest("[data-st-for]"); if (s) setStatus(CAST[+s.dataset.stFor], s.value); });
+document.addEventListener("change", function(e){
+  var t = e.target;
+  var s = t.closest && t.closest("[data-st-for]"); if (s){ var p = CAST[+s.dataset.stFor]; saveCasting(p, {status:s.value}, p.name+": "+s.value); return; }
+  if (t.id==="dStory" && cur>-1){ var q = CAST[cur]; saveCasting(q, {storyline:t.value}, "Storyline saved for "+q.name); return; }
+  if (t.id==="nCat"){ var ns = $("nStory"); ns.innerHTML = storyOptions(t.value, (OPTIONS[t.value]||[])[0]||""); return; }
+  if (t.dataset && t.dataset.dloc && cur>-1){ toggleLoc(CAST[cur], t.dataset.dloc); return; }
+  if (t.id==="incC"){ includeContacts = t.checked; }
+});
 $("drawer").addEventListener("click", function(e){
   if (e.target.closest("#dClose") || e.target.closest("#addCancel")) return close();
   if (e.target.closest("#dPrev")) return step(-1);
   if (e.target.closest("#dNext")) return step(1);
   var cp = e.target.closest("[data-copy]");
   if (cp){ var v = cp.dataset.copy; try { navigator.clipboard.writeText(v).then(function(){ toast("Copied"); }, function(){ toast(v); }); } catch(_){ toast(v); } return; }
-  if (e.target.closest("#dSaveNote")){
-    var p = CAST[cur], c = Object.assign({status:status(p), note:""}, CASTING[p.id]); c.note = $("dNote").value.trim(); CASTING[p.id] = c;
-    $("dNote").blur(); write("casting", p.id, c).then(function(){ toast("Notes saved for "+p.name); }, saveErr); refresh(); return;
-  }
+  if (e.target.closest("#dSaveNote")){ var p = CAST[cur]; var nv = $("dNote").value.trim(); $("dNote").blur(); saveCasting(p, {note:nv}, "Notes saved for "+p.name); return; }
   if (e.target.closest("#rmBtn")){ $("rmWrap").innerHTML = '<div class="confirm"><span>Remove '+esc(CAST[cur].name)+' from the casting list?</span><button class="btn danger" id="rmYes" type="button">Remove</button><button class="btn" id="rmNo" type="button">Keep</button></div>'; return; }
   if (e.target.closest("#rmNo")) return openProfile(cur, true);
   if (e.target.closest("#rmYes")){
@@ -514,7 +727,7 @@ function lockUI(msg, err){
   var h = '<span class="label">Email &amp; phone</span>';
   if (!window.crypto || !crypto.subtle){ $("lock").innerHTML = h+'<span class="msg">Open this page over https to use contacts.</span>'; return; }
   if (!KEY) h += '<form id="unlock" autocomplete="off"><input class="inp" id="pw" type="password" placeholder="Team password" aria-label="Team password to unlock email and phone"><button class="btn solid" type="submit">'+LOCK_SVG+'Unlock</button></form>';
-  else h += '<span class="msg ok">Unlocked. Click a cell to edit.</span><button class="btn" id="relock" type="button">'+LOCK_SVG+'Lock</button>';
+  else h += '<span class="msg ok">Unlocked. Click a cell to edit.</span><label class="chk"><input type="checkbox" id="incC"'+(includeContacts?' checked':'')+'>Include in Excel download</label><button class="btn" id="relock" type="button">'+LOCK_SVG+'Lock</button>';
   if (msg) h += '<span class="msg'+(err?' err':'')+'">'+esc(msg)+'</span>';
   $("lock").innerHTML = h;
 }
@@ -531,7 +744,7 @@ $("lock").addEventListener("submit", function(e){
     return dec(k, CHECK).then(function(s){ if (s!=="arabians-ok") throw 0; KEY = k; lockUI(); return decryptAll().then(refresh); });
   }).catch(function(){ lockUI("Wrong password. Try again.", true); var p=$("pw"); if (p) p.focus(); });
 });
-$("lock").addEventListener("click", function(e){ if (e.target.closest("#relock")){ KEY = null; CONTACTS = {}; lockUI(); refresh(); } });
+$("lock").addEventListener("click", function(e){ if (e.target.closest("#relock")){ KEY = null; CONTACTS = {}; includeContacts = false; lockUI(); refresh(); } });
 $("grid").addEventListener("focusout", function(e){
   var el = e.target; if (!el.classList || !el.classList.contains("cin")) return;
   var p = CAST[+el.dataset.ci], f = el.dataset.f, v = el.value.trim();
