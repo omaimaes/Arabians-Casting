@@ -116,7 +116,14 @@ td.num{font-family:var(--f-mono);font-size:11px;color:var(--mute2);font-variant-
 .loc-opt:hover{border-color:var(--line-strong)}
 .loc-opt input{accent-color:var(--gold);width:15px;height:15px;flex:none}
 .loc-opt .venue{color:var(--mute2);font-size:12.5px;margin-left:auto;text-align:right}
-.vip{color:var(--gold);font-size:.8em;margin-right:6px;vertical-align:.08em}
+.vip{color:var(--goldhi);font-size:.85em;margin-right:6px;vertical-align:.06em;text-shadow:0 0 12px rgba(224,188,88,.55)}
+.vip-badge{display:inline-block;font-family:var(--f-mono);font-size:9px;font-weight:500;letter-spacing:.18em;padding:3px 7px 2px;margin-left:8px;border-radius:2px;background:var(--gold);color:var(--ink);vertical-align:middle;line-height:1.2}
+tr.r.vvip td{background:rgba(201,168,76,.09)}
+tr.r.vvip td:first-child{box-shadow:inset 3px 0 0 var(--gold)}
+tr.r.vvip td.num{color:var(--gold)}
+tr.r.vvip .nm{color:var(--goldhi)}
+tr.r.vvip:hover td{background:rgba(201,168,76,.18)}
+.d-vip{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--gold);border-radius:3px;background:rgba(201,168,76,.12);color:var(--goldhi);font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
 .vipbtn{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border:1px dashed rgba(243,238,226,.25);border-radius:999px;color:var(--mute)}
 .vipbtn:hover{border-color:var(--line-strong);color:var(--cream)}
 .vipbtn[aria-pressed="true"]{border:1px solid var(--gold);background:rgba(201,168,76,.16);color:var(--goldhi)}
@@ -144,6 +151,9 @@ tr.gh h2{display:inline;font:400 21px var(--f-display);margin:0 10px 0 0}
   tbody tr.r td.n{grid-column:1/-1;order:-2;padding-right:120px}
   tbody tr.r td.st{position:absolute;right:18px;top:16px;width:112px}
   tbody tr.r td.wide{grid-column:1/-1}
+  tbody tr.r.vvip{border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold);background:linear-gradient(180deg,rgba(201,168,76,.14),var(--panel) 60%)}
+  tr.r.vvip td,tr.r.vvip:hover td{background:none}
+  tr.r.vvip td:first-child{box-shadow:none}
   .cin{width:100%;margin:0;border-color:var(--line-soft)}
   tr.gh td{background:none;padding:14px 0 4px;border:0;border-bottom:1px solid var(--line)}
   .empty-row td{border:1px dashed var(--line);border-radius:4px}
@@ -365,9 +375,9 @@ function contactCell(p,f){
 }
 function row(p, rowNo){
   var s = status(p), n = note(p);
-  return '<tr class="r'+(s==="Declined"?' declined':'')+'" tabindex="0" data-i="'+p.i+'" aria-label="Open profile for '+esc(p.name)+'">' +
+  return '<tr class="r'+(s==="Declined"?' declined':'')+(vip(p)?' vvip':'')+'" tabindex="0" data-i="'+p.i+'" aria-label="Open profile for '+esc(p.name)+'">' +
     '<td class="num">'+String(rowNo).padStart(2,"0")+'</td>' +
-    '<td class="n"><div class="nm">'+(vip(p)?'<span class="vip" title="VVIP" aria-label="VVIP">★</span>':'')+esc(p.name)+(p.added?'<span class="added-tag">Added</span>':'')+'</div>'+(p.title?'<div class="tt">'+esc(p.title)+'</div>':'')+(F.group!=="category"?'<div class="tt cat-cell">'+esc(p.category)+'</div>':'')+'</td>' +
+    '<td class="n"><div class="nm">'+(vip(p)?'<span class="vip" title="VVIP" aria-label="VVIP">★</span>':'')+esc(p.name)+(vip(p)?'<span class="vip-badge">VVIP</span>':'')+(p.added?'<span class="added-tag">Added</span>':'')+'</div>'+(p.title?'<div class="tt">'+esc(p.title)+'</div>':'')+(F.group!=="category"?'<div class="tt cat-cell">'+esc(p.category)+'</div>':'')+'</td>' +
     '<td>'+(p.affiliation?esc(p.affiliation):'<span class="none">—</span>')+'</td>' +
     '<td class="dim">'+(p.country?esc(p.country):'<span class="none">—</span>')+'</td>' +
     '<td class="wide">'+storyHTML(story(p))+'</td>' +
@@ -434,6 +444,7 @@ function openProfile(i, keepScroll){
   $("drawer").innerHTML =
     '<div class="d-top"><div class="kicker">'+esc(p.category)+(p.title?' · '+esc(p.title):'')+'</div><button class="x" id="dClose" aria-label="Close">×</button></div>' +
     '<h2 class="d-name" id="dName">'+(vip(p)?'<span class="vip" title="VVIP">★</span>':'')+esc(p.name)+'</h2>' +
+    (vip(p)?'<div class="d-vip">★ VVIP character</div>':'') +
     (p.hook?'<p class="d-hook">“'+esc(p.hook)+'”</p>':'') +
     '<section class="casting" aria-label="Casting">' +
       '<div class="row" style="justify-content:space-between"><span class="kicker">Casting</span><div class="row"><button type="button" class="vipbtn" id="dVip" aria-pressed="'+vip(p)+'">★ VVIP</button><div style="width:150px">'+stSelect(p,"dStatus")+'</div></div></div>' +
